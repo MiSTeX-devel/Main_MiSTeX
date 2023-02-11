@@ -65,7 +65,7 @@ static int fpgamgr_program_init(void)
 /* Write the RBF data to FPGA Manager */
 static void fpgamgr_program_write(const void *rbf_data, unsigned long rbf_size)
 {
-	uint32_t src = (uint32_t)rbf_data;
+	// uint32_t src = (uint32_t)rbf_data;
 	// TODO
 }
 
@@ -125,7 +125,7 @@ static int socfpga_load(const void *rbf_data, size_t rbf_size)
 {
 	unsigned long status;
 
-	if ((uint32_t)rbf_data & 0x3) {
+	if ((uint64_t)rbf_data & 0x3) {
 		printf("FPGA: Unaligned data, realign to 32bit boundary.\n");
 		return -EINVAL;
 	}

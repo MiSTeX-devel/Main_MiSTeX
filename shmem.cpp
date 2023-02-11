@@ -41,7 +41,7 @@ int shmem_unmap(void* map, uint32_t size)
 {
 	if (munmap(map, size) < 0)
 	{
-		printf("Error: Unable to unmap(0x%X, %d)!\n", (uint32_t)map, size);
+		printf("Error: Unable to unmap(0x%X, %d)!\n", (uint64_t)map, size);
 		return 0;
 	}
 

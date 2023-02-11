@@ -69,7 +69,9 @@ int main(int argc, char *argv[])
 	}
 
 	FindStorage();
+	printf("FindStorage done!\n");
 	user_io_init((argc > 1) ? argv[1] : "",(argc > 2) ? argv[2] : NULL);
+	printf("user_io_init done!\n");
 
 #ifdef USE_SCHEDULER
 	scheduler_init();

@@ -330,6 +330,7 @@ char has_menu()
 
 void user_io_read_core_name()
 {
+	printf("user_io_read_core_name\n");
 	is_menu_type = 0;
 	is_x86_type  = 0;
 	is_no_type   = 0;
@@ -1212,7 +1213,7 @@ uint16_t altcfg(int alt)
 {
 	int res = 0;
 
-	void* buf = shmem_map(0x1FFFF000, 0x1000);
+	void* buf = 0; // shmem_map(0x1FFFF000, 0x1000);
 	if (!buf) return 0;
 
 	volatile uint8_t* par = (volatile uint8_t*)buf;
@@ -1238,7 +1239,7 @@ uint16_t altcfg(int alt)
 		}
 	}
 
-	shmem_unmap(buf, 0x1000);
+	//shmem_unmap(buf, 0x1000);
 	return res;
 }
 
@@ -2653,6 +2654,7 @@ int user_io_file_tx(const char* name, unsigned char index, char opensave, char m
 static char cfgstr[1024 * 10] = {};
 void user_io_read_confstr()
 {
+	printf("user_io_read_confstr\n");
 	spi_uio_cmd_cont(UIO_GET_STRING);
 
 	uint32_t j = 0;

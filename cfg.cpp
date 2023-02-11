@@ -367,6 +367,7 @@ static void ini_parse(int alt, const char *vmode)
 	int section = 0;
 	int eof;
 
+	printf("ini_parse()\n");
 	ini_parser_debugf("Start INI parser for core \"%s\"(%s), video mode \"%s\".", user_io_get_core_name(0), user_io_get_core_name(1), vmode);
 
 	memset(line, 0, sizeof(line));
@@ -418,6 +419,8 @@ const char* cfg_get_name(uint8_t alt)
 	static char name[64];
 	strcpy(name, "MiSTer.ini");
 
+	printf("cfg_get_name(%d)\n", alt);
+
 	if (alt == 1)
 	{
 		strcpy(name, "MiSTer_alt_1.ini");
@@ -431,6 +434,7 @@ const char* cfg_get_name(uint8_t alt)
 
 void cfg_parse()
 {
+	printf("cfg_parse()\n");
 	memset(&cfg, 0, sizeof(cfg));
 	cfg.bootscreen = 1;
 	cfg.fb_terminal = 1;

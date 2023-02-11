@@ -538,6 +538,7 @@ __off64_t FileGetSize(fileTYPE *file)
 
 int FileOpen(fileTYPE *file, const char *name, char mute)
 {
+	printf("FileOpen(%s, %s, %c)\n", file->name, name, mute);
 	return FileOpenEx(file, name, O_RDONLY, mute);
 }
 

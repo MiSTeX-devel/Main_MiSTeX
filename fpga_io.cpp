@@ -171,7 +171,8 @@ static void do_bridge(uint32_t enable)
 
 static int make_env(const char *name, const char *cfg)
 {
-	void* buf = shmem_map(0x1FFFF000, 0x1000);
+	printf("make_env\n");
+	void* buf = 0; //shmem_map(0x1FFFF000, 0x1000);
 	if (!buf) return -1;
 
 	volatile char* str = (volatile char*)buf;
@@ -196,7 +197,7 @@ static int make_env(const char *name, const char *cfg)
 	*str++ = '"';
 	*str++ = '\n';
 	FileLoad(cfg, (void*)str, 0);
-	shmem_unmap(buf, 0x1000);
+	// shmem_unmap(buf, 0x1000);
 	return 0;
 }
 
@@ -392,6 +393,7 @@ void app_restart(const char *path, const char *xml)
 
 void fpga_core_reset(int reset)
 {
+	printf("fpga_core_reset(%d)\n", reset);
 }
 
 int is_fpga_ready(int quick)
@@ -404,6 +406,7 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
+	printf("fpga_spi_en(%08x, %08x)\n", mask, en);
 	//uint32_t gpo = fpga_gpo_read() | 0x80000000;
 	//fpga_gpo_write(en ? gpo | mask : gpo & ~mask);
 }
@@ -424,11 +427,13 @@ void fpga_wait_to_reset()
 
 uint16_t fpga_spi(uint16_t word)
 {
+	printf("fpga_spi(%04x)\n", word);
 	return 0;
 }
 
 uint16_t fpga_spi_fast(uint16_t word)
 {
+	printf("fpga_spi_fast(%04x)\n", word);
 	return 0;
 }
 

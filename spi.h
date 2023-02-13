@@ -17,9 +17,9 @@ void EnableIO();
 void DisableIO();
 
 // base functions
-uint8_t  inline spi_b(uint8_t parm)
+uint8_t  inline spi_b(uint8_t databyte)
 {
-	return (uint8_t)fpga_spi(parm);
+	return (uint8_t)fpga_spi(databyte);
 }
 
 uint16_t inline spi_w(uint16_t word)

@@ -44,13 +44,11 @@ void DisableOsd()
 
 void EnableIO()
 {
-	printf("EnableIO\n");
 	fpga_spi_en(SSPI_IO_EN, 1);
 }
 
 void DisableIO()
 {
-	printf("DisableIO\n");
 	fpga_spi_en(SSPI_IO_EN, 0);
 }
 

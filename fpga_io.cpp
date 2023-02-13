@@ -8,6 +8,7 @@
 #include <termios.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <linux/spi/spidev.h>
 
 #include "fpga_io.h"
 #include "file_io.h"
@@ -20,6 +21,25 @@
 #include "fpga_nic301.h"
 
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
+
+static const char *spi_device = "/dev/spidev1.0";
+#define SPI_SPEED 20000000                       	// SPI frequency clock
+static uint8_t spi_mode = SPI_MODE_3;
+
+uint16_t tx_buf;    	// TX buffer (16 bit unsigned integer)
+uint16_t rx_buf;    	// RX buffer (16 bit unsigned integer)
+
+struct spi_ioc_transfer spi_transfer =
+{	.tx_buf = (unsigned long)&tx_buf,
+	.rx_buf = (unsigned long)&rx_buf,
+	.len = 2,
+	.speed_hz = SPI_SPEED,
+	.delay_usecs = 0,
+	.bits_per_word = 8,
+	.cs_change = 0,
+};
+
+int spi_fd;
 
 static uint32_t *map_base;
 
@@ -285,31 +305,27 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 	return ret;
 }
 
-static uint32_t gpo_copy = 0;
-void inline fpga_gpo_write(uint32_t value)
-{
-	gpo_copy = value;
-	// /writel(value, (void*)(SOCFPGA_MGR_ADDRESS + 0x10));
-}
-
-void fpga_core_write(uint32_t offset, uint32_t value)
-{
-	//if (offset <= 0x1FFFFF) writel(value, (void*)(SOCFPGA_LWFPGASLAVES_ADDRESS + (offset & ~3)));
-}
-
-uint32_t fpga_core_read(uint32_t offset)
-{
-	//if (offset <= 0x1FFFFF) return readl((void*)(SOCFPGA_LWFPGASLAVES_ADDRESS + (offset & ~3)));
-	return 0;
-}
-
 int fpga_io_init()
 {
-	//map_base = (uint32_t*)shmem_map(FPGA_REG_BASE, FPGA_REG_SIZE);
-	if (!map_base) return -1;
 
-	fpga_gpo_write(0);
+	spi_fd = open(spi_device, O_RDWR);
+	if (spi_fd == -1) {
+		printf("ERROR: cannot open SPI device %s\n", spi_device);
+		goto err;
+	}
+
+	if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
+		printf("ERROR: cannot set SPI mode\n");
+		goto err;
+	}
+
+	// map_base = (uint32_t*)shmem_map(FPGA_REG_BASE, FPGA_REG_SIZE);
+	// if (!map_base) return -1;
+
 	return 0;
+
+	err:
+		exit(1);
 }
 
 int fpga_core_id()
@@ -393,7 +409,7 @@ void app_restart(const char *path, const char *xml)
 
 void fpga_core_reset(int reset)
 {
-	printf("fpga_core_reset(%d)\n", reset);
+	printf("TODO: fpga_core_reset(%d)\n", reset);
 }
 
 int is_fpga_ready(int quick)
@@ -407,8 +423,6 @@ int is_fpga_ready(int quick)
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
 	printf("fpga_spi_en(%08x, %08x)\n", mask, en);
-	//uint32_t gpo = fpga_gpo_read() | 0x80000000;
-	//fpga_gpo_write(en ? gpo | mask : gpo & ~mask);
 }
 
 void fpga_wait_to_reset()
@@ -428,35 +442,48 @@ void fpga_wait_to_reset()
 uint16_t fpga_spi(uint16_t word)
 {
 	printf("fpga_spi(%04x)\n", word);
+	tx_buf = word;
+	if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer) < 1)
+	{
+		printf("Can't send SPI message");
+		return -1;
+	}
 	return 0;
 }
 
 uint16_t fpga_spi_fast(uint16_t word)
 {
 	printf("fpga_spi_fast(%04x)\n", word);
+	fpga_spi(word);
 	return 0;
 }
 
 void fpga_spi_fast_block_write(const uint16_t *buf, uint32_t length)
 {
+	printf("fpga_spi_fast_block_write(%d)\n", length);
 }
 
 void fpga_spi_fast_block_read(uint16_t *buf, uint32_t length)
 {
+	printf("fpga_spi_fast_block_read(%d)\n", length);
 }
 
 void fpga_spi_fast_block_write_8(const uint8_t *buf, uint32_t length)
 {
+	printf("fpga_spi_fast_block_write_8(%d)\n", length);
 }
 
 void fpga_spi_fast_block_read_8(uint8_t *buf, uint32_t length)
 {
+	printf("fpga_spi_fast_block_read_8(%d)\n", length);
 }
 
 void fpga_spi_fast_block_write_be(const uint16_t *buf, uint32_t length)
 {
+	printf("fpga_spi_fast_block_write_be(%d)\n", length);
 }
 
 void fpga_spi_fast_block_read_be(uint16_t *buf, uint32_t length)
 {
+	printf("fpga_spi_fast_block_read_be(%d)\n", length);
 }

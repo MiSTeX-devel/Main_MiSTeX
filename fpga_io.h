@@ -25,8 +25,6 @@ int  fpga_get_buttons();
 int fpga_get_io_type();
 
 void fpga_core_reset(int reset);
-void fpga_core_write(uint32_t offset, uint32_t value);
-uint32_t fpga_core_read(uint32_t offset);
 int fpga_core_id();
 int is_fpga_ready(int quick);
 

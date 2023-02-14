@@ -1,4 +1,4 @@
-# Main_MiSTer Main Binary and Wiki Repo
+# Main_MiSTy Main Binary and Wiki Repo
 
 This repo serves as the home for the MiSTer Main binaries and the Wiki.
 

@@ -2316,7 +2316,7 @@ static void fb_init()
 {
 	if (!fb_base)
 	{
-		fb_base = (volatile uint32_t*)shmem_map(FB_ADDR, FB_SIZE * 4 * 3);
+		//fb_base = (volatile uint32_t*)shmem_map(FB_ADDR, FB_SIZE * 4 * 3);
 		if (!fb_base)
 		{
 			printf("Unable to mmap FB!\n");

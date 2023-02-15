@@ -1178,68 +1178,16 @@ void ResetUART()
 uint16_t sdram_sz(int sz)
 {
 	int res = 0;
-
-	void* buf = shmem_map(0x1FFFF000, 0x1000);
-	if (!buf) return 0;
-
-	volatile uint8_t* par = (volatile uint8_t*)buf;
-	par += 0xF00;
-	if (sz >= 0)
-	{
-		*par++ = 0x12;
-		*par++ = 0x57;
-		*par++ = (uint8_t)(sz>>8);
-		*par++ = (uint8_t)sz;
-	}
-	else
-	{
-		if ((par[0] == 0x12) && (par[1] == 0x57))
-		{
-			res = 0x8000 | (par[2]<<8) | par[3];
-			if(res & 0x4000) printf("*** Debug phase: %d\n", (res & 0x100) ? (res & 0xFF) : -(res & 0xFF));
-			else printf("*** Found SDRAM config: %d\n", res & 7);
-		}
-		else if(!is_menu())
-		{
-			printf("*** SDRAM config not found\n");
-		}
-	}
-
-	shmem_unmap(buf, 0x1000);
+	printf("sdram_sz(%d)\n", sz);
+	// TODO: report SDRAM SIZE
 	return res;
 }
 
 uint16_t altcfg(int alt)
 {
 	int res = 0;
-
-	void* buf = 0; // shmem_map(0x1FFFF000, 0x1000);
-	if (!buf) return 0;
-
-	volatile uint8_t* par = (volatile uint8_t*)buf;
-	par += 0xF04;
-	if (alt >= 0)
-	{
-		*par++ = 0x34;
-		*par++ = 0x99;
-		*par++ = 0xBA;
-		*par++ = (uint8_t)alt;
-		printf("** altcfg(%d)\n", alt);
-	}
-	else
-	{
-		if ((par[0] == 0x34) && (par[1] == 0x99) && (par[2] == 0xBA))
-		{
-			res = par[3];
-			printf("** altcfg: got cfg %d\n", res);
-		}
-		else
-		{
-			printf("** altcfg: no cfg\n");
-		}
-	}
-
-	//shmem_unmap(buf, 0x1000);
+	printf("altcfg(%d)\n", alt);
+	// TODO
 	return res;
 }
 
@@ -1738,6 +1686,9 @@ int process_ss(const char *rom_name, int enable)
 	static uint32_t ss_cnt[4] = {};
 	static void *base[4] = {};
 	static int enabled = 0;
+
+	//printf("process_ss(%s, %d)\n", rom_name, enable);
+	return 0; // TODO
 
 	if (!ss_base) return 0;
 

@@ -85,120 +85,7 @@ static int fpgamgr_test_fpga_ready(void)
 	return 1;
 }
 
-/* Start the FPGA programming by initialize the FPGA Manager */
-static int fpgamgr_program_init(void)
-{
-	return 0;
-}
-
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
-
-/* Write the RBF data to FPGA Manager */
-static void fpgamgr_program_write(const void *rbf_data, unsigned long rbf_size)
-{
-	// uint32_t src = (uint32_t)rbf_data;
-	// TODO
-}
-
-/* Ensure the FPGA entering config done */
-static int fpgamgr_program_poll_cd(void)
-{
-	/* Config error */
-	if (0) {
-		printf("FPGA: Configuration error.\n");
-		return -3;
-	}
-
-	/* Timeout happened, return error */
-	if (42 == FPGA_TIMEOUT_CNT) {
-		printf("FPGA: Timeout waiting for program.\n");
-		return -4;
-	}
-
-	/* Config done without error */
-	return 0;
-}
-
-/* Ensure the FPGA entering init phase */
-static int fpgamgr_program_poll_initphase(void)
-{
-	unsigned long i;
-
-	/* If not in configuration state, return error */
-	if (i == FPGA_TIMEOUT_CNT)
-		return -6;
-
-	return 0;
-}
-
-/* Ensure the FPGA entering user mode */
-static int fpgamgr_program_poll_usermode(void)
-{
-	unsigned long i;
-
-	/* (5) wait until FPGA enter user mode */
-	for (i = 0; i < FPGA_TIMEOUT_CNT; i++) {
-		if (1) // is_usermode
-			break;
-	}
-	/* If not in configuration state, return error */
-	if (i == FPGA_TIMEOUT_CNT)
-		return -8;
-
-	return 0;
-}
-
-/*
-* FPGA Manager to program the FPGA. This is the interface used by FPGA driver.
-* Return 0 for sucess, non-zero for error.
-*/
-static int socfpga_load(const void *rbf_data, size_t rbf_size)
-{
-	unsigned long status;
-
-	if ((uint64_t)rbf_data & 0x3) {
-		printf("FPGA: Unaligned data, realign to 32bit boundary.\n");
-		return -EINVAL;
-	}
-
-	/* Initialize the FPGA Manager */
-	status = fpgamgr_program_init();
-	if (status)
-		return status;
-
-	/* Write the RBF data to FPGA Manager */
-	fpgamgr_program_write(rbf_data, rbf_size);
-
-	/* Ensure the FPGA entering config done */
-	status = fpgamgr_program_poll_cd();
-	if (status)
-		return status;
-
-	/* Ensure the FPGA entering init phase */
-	status = fpgamgr_program_poll_initphase();
-	if (status)
-		return status;
-
-	/* Ensure the FPGA entering user mode */
-	return fpgamgr_program_poll_usermode();
-}
-
-static void do_bridge(uint32_t enable)
-{
-	if (enable)
-	{
-		// writel(0x00003FFF, (void*)(SOCFPGA_SDR_ADDRESS + 0x5080));
-		// writel(0x00000000, &reset_regs->brg_mod_reset);
-		// writel(0x00000019, &nic301_regs->remap);
-	}
-	else
-	{
-		// writel(0, &sysmgr_regs->fpgaintfgrp_module);
-		// writel(0, (void*)(SOCFPGA_SDR_ADDRESS + 0x5080));
-		// writel(7, &reset_regs->brg_mod_reset);
-		// writel(1, &nic301_regs->remap);
-	}
-}
 
 static int make_env(const char *name, const char *cfg)
 {
@@ -242,7 +129,7 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 	{
 		fpga_core_reset(1);
 		make_env(name, cfg);
-		do_bridge(0);
+		//do_bridge(0);
 		reboot(0);
 	}
 
@@ -251,7 +138,8 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 	if(name[0] == '/') strcpy(path, name);
 	else sprintf(path, "%s/%s", !strcasecmp(name, "menu.rbf") ? getStorageDir(0) : getRootDir(), name);
 
-	int rbf = open(path, O_RDONLY);
+	// TODO
+	int rbf = -1; //open(path, O_RDONLY);
 	if (rbf < 0)
 	{
 		char error[4096];
@@ -260,57 +148,6 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 		Info(error,5000);
 		return -1;
 	}
-	else
-	{
-		struct stat64 st;
-		if (fstat64(rbf, &st)<0)
-		{
-			printf("Couldn't get info of file %s\n", path);
-			ret = -1;
-		}
-		else
-		{
-			printf("Bitstream size: %lld bytes\n", st.st_size);
-
-			void *buf = malloc(st.st_size);
-			if (!buf)
-			{
-				printf("Couldn't allocate %llu bytes.\n", st.st_size);
-				ret = -1;
-			}
-			else
-			{
-				fpga_core_reset(1);
-				if (read(rbf, buf, st.st_size)<st.st_size)
-				{
-					printf("Couldn't read file %s\n", name);
-					ret = -1;
-				}
-				else
-				{
-					void *p = buf;
-					__off64_t sz = st.st_size;
-					if (!memcmp(buf, "MiSTer", 6))
-					{
-						sz = *(uint32_t*)(((uint8_t*)buf) + 12);
-						p = (void*)(((uint8_t*)buf) + 16);
-					}
-					do_bridge(0);
-					ret = socfpga_load(p, sz);
-					if (ret)
-					{
-						printf("Error %d while loading %s\n", ret, path);
-					}
-					else
-					{
-						do_bridge(1);
-					}
-				}
-				free(buf);
-			}
-		}
-	}
-	close(rbf);
 
 	app_restart(!strcasecmp(name, "menu.rbf") ? "menu.rbf" : path, xml);
 	return ret;

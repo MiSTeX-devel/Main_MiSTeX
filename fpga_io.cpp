@@ -23,7 +23,7 @@
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
 
 static const char *spi_device = "/dev/spidev1.0";
-#define SPI_SPEED 20000000                       	// SPI frequency clock
+#define SPI_SPEED 10000000                       	// SPI frequency clock
 static uint8_t spi_mode = SPI_MODE_3;
 
 uint16_t tx_buf;    	// TX buffer (16 bit unsigned integer)
@@ -36,7 +36,7 @@ struct spi_ioc_transfer spi_transfer =
 	.speed_hz = SPI_SPEED,
 	.delay_usecs = 0,
 	.bits_per_word = 8,
-	.cs_change = 0,
+	.cs_change = 1,
 };
 
 int spi_fd;
@@ -307,18 +307,6 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 
 int fpga_io_init()
 {
-
-	spi_fd = open(spi_device, O_RDWR);
-	if (spi_fd == -1) {
-		printf("ERROR: cannot open SPI device %s\n", spi_device);
-		goto err;
-	}
-
-	if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
-		printf("ERROR: cannot set SPI mode\n");
-		goto err;
-	}
-
 	return 0;
 
 	err:
@@ -413,7 +401,22 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
-	printf("fpga_spi_en(%08x, %08x)\n", mask, en);
+	if (en) {
+		spi_fd = open(spi_device, O_RDWR);
+		if (spi_fd == -1) {
+			printf("ERROR: cannot open SPI device %s\n", spi_device);
+			return;
+		}
+
+		if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
+			printf("ERROR: cannot set SPI mode\n");
+			return;
+		}
+	} else {
+		if (spi_fd >= 0) {
+			close(spi_fd);
+		}
+	}
 }
 
 void fpga_wait_to_reset()

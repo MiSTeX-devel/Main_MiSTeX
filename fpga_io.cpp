@@ -23,7 +23,8 @@
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
 
 static const char *spi_device = "/dev/spidev1.0";
-#define SPI_SPEED 10000000                       	// SPI frequency clock
+#define SPI_SPEED 10000000
+#define SPI_TRACE 0
 static uint8_t spi_mode = SPI_MODE_3;
 
 uint16_t tx_buf;    	// TX buffer (16 bit unsigned integer)
@@ -308,9 +309,6 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 int fpga_io_init()
 {
 	return 0;
-
-	err:
-		exit(1);
 }
 
 int fpga_core_id()
@@ -401,6 +399,7 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
+	if (SPI_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
 	if (en) {
 		spi_fd = open(spi_device, O_RDWR);
 		if (spi_fd == -1) {
@@ -435,7 +434,7 @@ void fpga_wait_to_reset()
 
 uint16_t fpga_spi(uint16_t word)
 {
-	printf("fpga_spi(%04x)\n", word);
+	if (SPI_TRACE) printf("fpga_spi(%04x)\n", word);
 	tx_buf = word;
 	if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer) < 1)
 	{

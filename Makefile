@@ -20,6 +20,7 @@ INCLUDE	+= -I./lib/libco
 INCLUDE	+= -I./lib/miniz
 INCLUDE	+= -I./lib/md5
 INCLUDE += -I./lib/lzma
+INCLUDE += -I./lib/gpiod/
 INCLUDE += -I./lib/libchdr/include
 INCLUDE += -I./lib/flac/include
 INCLUDE += -I./lib/flac/src/include
@@ -41,7 +42,7 @@ CPP_SRC = $(wildcard *.cpp) \
 
 IMG =     $(wildcard *.png)
 
-IMLIB2_LIB  = -Llib/imlib2 -lfreetype -lbz2 -lpng16 -lz -lImlib2
+IMLIB2_LIB  = -Llib/imlib2 -lfreetype -lbz2 -lpng16 -lz -lImlib2 -Llib/gpiod -lgpiod
 
 OBJ	= $(C_SRC:.c=.c.o) $(CPP_SRC:.cpp=.cpp.o) $(IMG:.png=.png.o)
 DEP	= $(C_SRC:.c=.c.d) $(CPP_SRC:.cpp=.cpp.d)

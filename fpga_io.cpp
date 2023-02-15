@@ -17,10 +17,20 @@
 #include "menu.h"
 #include "shmem.h"
 #include "offload.h"
+#include "gpiod.h"
 
 #include "fpga_nic301.h"
 
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
+
+static const char *gpio_chip_name = "gpiochip0";
+#define GPIIO_PIN_FPGA_EN 	103
+#define GPIIO_PIN_OSD_EN 	104
+#define GPIIO_PIN_IO_EN 	105
+static struct gpiod_chip *gpio_chip;
+static struct gpiod_line *gpio_line_fpga_en;
+static struct gpiod_line *gpio_line_osd_en;
+static struct gpiod_line *gpio_line_io_en;
 
 static const char *spi_device = "/dev/spidev1.0";
 #define SPI_SPEED 10000000
@@ -308,7 +318,23 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 
 int fpga_io_init()
 {
+	gpio_chip = gpiod_chip_open_by_name(gpio_chip_name);
+	if (!gpio_chip) goto err;
+
+	gpio_line_fpga_en = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_FPGA_EN);
+	gpio_line_osd_en  = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_OSD_EN);
+	gpio_line_io_en   = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_IO_EN);
+	if (!gpio_line_fpga_en || !gpio_line_osd_en || !gpio_line_io_en) goto err;
+
+	gpiod_line_request_output(gpio_line_fpga_en, "FPGA_EN", 0);
+	gpiod_line_request_output(gpio_line_osd_en, "OSD_EN", 0);
+	gpiod_line_request_output(gpio_line_io_en, "IO_EN", 0);
+
 	return 0;
+
+	err:
+		printf("Error: fpga_io_init() failed!\n");
+		return -1;
 }
 
 int fpga_core_id()
@@ -400,6 +426,10 @@ int is_fpga_ready(int quick)
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
 	if (SPI_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
+	if (mask & SSPI_FPGA_EN) gpiod_line_set_value(gpio_line_fpga_en, en);
+	if (mask & SSPI_OSD_EN)  gpiod_line_set_value(gpio_line_osd_en,  en);
+	if (mask & SSPI_IO_EN)   gpiod_line_set_value(gpio_line_io_en,   en);
+
 	if (en) {
 		spi_fd = open(spi_device, O_RDWR);
 		if (spi_fd == -1) {
@@ -446,7 +476,7 @@ uint16_t fpga_spi(uint16_t word)
 
 uint16_t fpga_spi_fast(uint16_t word)
 {
-	printf("fpga_spi_fast(%04x)\n", word);
+	if (SPI_TRACE) printf("fpga_spi_fast(%04x)\n", word);
 	fpga_spi(word);
 	return 0;
 }

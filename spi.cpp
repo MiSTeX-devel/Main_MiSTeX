@@ -2,10 +2,6 @@
 #include "hardware.h"
 #include "fpga_io.h"
 
-#define SSPI_FPGA_EN (1<<18)
-#define SSPI_OSD_EN  (1<<19)
-#define SSPI_IO_EN   (1<<20)
-
 #define SWAPW(a) ((((a)<<8)&0xff00)|(((a)>>8)&0x00ff))
 
 void EnableFpga()

@@ -8,6 +8,10 @@
 #define OSD_VGA  2
 #define OSD_ALL  (OSD_VGA|OSD_HDMI)
 
+#define SSPI_FPGA_EN (1<<18)
+#define SSPI_OSD_EN  (1<<19)
+#define SSPI_IO_EN   (1<<20)
+
 /* chip select functions */
 void EnableFpga();
 void DisableFpga();

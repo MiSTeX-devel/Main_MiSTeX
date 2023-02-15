@@ -319,9 +319,6 @@ int fpga_io_init()
 		goto err;
 	}
 
-	// map_base = (uint32_t*)shmem_map(FPGA_REG_BASE, FPGA_REG_SIZE);
-	// if (!map_base) return -1;
-
 	return 0;
 
 	err:
@@ -330,17 +327,19 @@ int fpga_io_init()
 
 int fpga_core_id()
 {
-	return 0;
+	return 0x5CA623A4;
 }
 
 int fpga_get_fio_size()
 {
+	// 0: normal (8-bit) or 1: wide (16-bit) IO
 	return 0;
 }
 
 int fpga_get_io_version()
 {
-	return 0;
+	// 0: obsolete, 1: current
+	return 1;
 }
 
 void fpga_set_led(uint32_t on)
@@ -349,11 +348,13 @@ void fpga_set_led(uint32_t on)
 
 int fpga_get_buttons()
 {
+	// OSD/User Buttons
 	return 0;
 }
 
 int fpga_get_io_type()
 {
+	// the FPGA board switches
 	return 0;
 }
 
@@ -364,17 +365,7 @@ void reboot(int cold)
 
 	usleep(500000);
 
-	void* buf = shmem_map(0x1FFFF000, 0x1000);
-	if (buf)
-	{
-		volatile uint32_t* flg = (volatile uint32_t*)buf;
-		//flg += 0xF08/4;
-		//*flg = cold ? 0 : 0xBEEFB001;
-		shmem_unmap(buf, 0x1000);
-	}
-
-	//writel(1, &reset_regs->ctrl);
-	while (1) sleep(1);
+	system("reboot");
 }
 
 char *getappname()

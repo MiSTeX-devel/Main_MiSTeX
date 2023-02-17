@@ -24,10 +24,12 @@
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
 
 static const char *gpio_chip_name = "gpiochip0";
-#define GPIIO_PIN_FPGA_EN 	103
-#define GPIIO_PIN_OSD_EN 	104
-#define GPIIO_PIN_IO_EN 	105
+#define GPIIO_PIN_FPGA_RESET 102
+#define GPIIO_PIN_FPGA_EN    103
+#define GPIIO_PIN_OSD_EN     104
+#define GPIIO_PIN_IO_EN      105
 static struct gpiod_chip *gpio_chip;
+static struct gpiod_line *gpio_line_fpga_reset;
 static struct gpiod_line *gpio_line_fpga_en;
 static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
@@ -158,11 +160,16 @@ int fpga_io_init()
 	gpio_chip = gpiod_chip_open_by_name(gpio_chip_name);
 	if (!gpio_chip) goto err;
 
-	gpio_line_fpga_en = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_FPGA_EN);
-	gpio_line_osd_en  = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_OSD_EN);
-	gpio_line_io_en   = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_IO_EN);
-	if (!gpio_line_fpga_en || !gpio_line_osd_en || !gpio_line_io_en) goto err;
+	gpio_line_fpga_reset = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_FPGA_RESET);
+	gpio_line_fpga_en    = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_FPGA_EN);
+	gpio_line_osd_en     = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_OSD_EN);
+	gpio_line_io_en      = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_IO_EN);
+	if (!gpio_line_fpga_en     ||
+	    !gpio_line_osd_en      ||
+	    !gpio_line_io_en       ||
+	    !gpio_line_fpga_reset) goto err;
 
+	gpiod_line_request_output(gpio_line_fpga_reset, "FPGA_RESET", 0);
 	gpiod_line_request_output(gpio_line_fpga_en, "FPGA_EN", 0);
 	gpiod_line_request_output(gpio_line_osd_en, "OSD_EN", 0);
 	gpiod_line_request_output(gpio_line_io_en, "IO_EN", 0);
@@ -249,7 +256,8 @@ void app_restart(const char *path, const char *xml)
 
 void fpga_core_reset(int reset)
 {
-	printf("TODO: fpga_core_reset(%d)\n", reset);
+	printf("fpga_core_reset(%d)\n", reset);
+	gpiod_line_set_value(gpio_line_fpga_reset, reset);
 }
 
 int is_fpga_ready(int quick)

@@ -36,7 +36,7 @@ static struct gpiod_line *gpio_line_io_en;
 
 static const char *spi_device = "/dev/spidev1.0";
 #define SPI_SPEED 8000000
-#define SPI_TRACE    1
+#define SPI_TRACE    0
 #define SPI_EN_TRACE 0
 static uint8_t spi_mode = SPI_MODE_3;
 
@@ -168,8 +168,8 @@ int fpga_io_init()
 	gpio_line_io_en      = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_IO_EN);
 	if (!gpio_line_fpga_en     ||
 	    !gpio_line_osd_en      ||
-	    !gpio_line_io_en       ||
-	    !gpio_line_fpga_reset) goto err;
+		!gpio_line_io_en       ||
+		!gpio_line_fpga_reset) goto err;
 
 	gpiod_line_request_output(gpio_line_fpga_reset, "FPGA_RESET", 0);
 	gpiod_line_request_output(gpio_line_fpga_en, "FPGA_EN", 0);

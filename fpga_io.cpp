@@ -35,21 +35,22 @@ static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
 
 static const char *spi_device = "/dev/spidev1.0";
-#define SPI_SPEED 10000000
-#define SPI_TRACE 0
+#define SPI_SPEED 8000000
+#define SPI_TRACE 1
 static uint8_t spi_mode = SPI_MODE_3;
 
-uint16_t tx_buf;    	// TX buffer (16 bit unsigned integer)
-uint16_t rx_buf;    	// RX buffer (16 bit unsigned integer)
+uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
+uint8_t rx_buf[2];    	// RX buffer (16 bit unsigned integer)
 
 struct spi_ioc_transfer spi_transfer =
-{	.tx_buf = (unsigned long)&tx_buf,
-	.rx_buf = (unsigned long)&rx_buf,
+{	.tx_buf = (unsigned long)tx_buf,
+	.rx_buf = (unsigned long)rx_buf,
 	.len = 2,
 	.speed_hz = SPI_SPEED,
 	.delay_usecs = 0,
 	.bits_per_word = 8,
-	.cs_change = 1,
+	// if this is zero, then CS is enabled
+	.cs_change = 0,
 };
 
 int spi_fd;
@@ -309,14 +310,17 @@ void fpga_wait_to_reset()
 
 uint16_t fpga_spi(uint16_t word)
 {
-	if (SPI_TRACE) printf("fpga_spi(%04x)\n", word);
-	tx_buf = word;
+	if (SPI_TRACE) printf("fpga_spi(%04x)", word);
+	tx_buf[0] = word >> 8;
+	tx_buf[1] = word & 0xff;
 	if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer) < 1)
 	{
 		printf("Can't send SPI message");
 		return -1;
 	}
-	return 0;
+	uint16_t result = (rx_buf[0] << 8) | rx_buf[1];
+	if (SPI_TRACE) printf(" => %04x\n", result);
+	return result;
 }
 
 uint16_t fpga_spi_fast(uint16_t word)

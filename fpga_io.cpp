@@ -36,7 +36,8 @@ static struct gpiod_line *gpio_line_io_en;
 
 static const char *spi_device = "/dev/spidev1.0";
 #define SPI_SPEED 8000000
-#define SPI_TRACE 1
+#define SPI_TRACE    1
+#define SPI_EN_TRACE 0
 static uint8_t spi_mode = SPI_MODE_3;
 
 uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
@@ -271,7 +272,7 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
-	if (SPI_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
+	if (SPI_EN_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
 	if (mask & SSPI_FPGA_EN) gpiod_line_set_value(gpio_line_fpga_en, en);
 	if (mask & SSPI_OSD_EN)  gpiod_line_set_value(gpio_line_osd_en,  en);
 	if (mask & SSPI_IO_EN)   gpiod_line_set_value(gpio_line_io_en,   en);

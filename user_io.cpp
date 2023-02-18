@@ -1604,7 +1604,6 @@ void user_io_sd_set_config(void)
 uint16_t user_io_kbdled_get_status(void)
 {
 	uint16_t c;
-
 	spi_uio_cmd_cont(UIO_GET_KBD_LED);
 	c = spi_w(0);
 	DisableIO();

@@ -4888,7 +4888,7 @@ int input_test(int getchar)
 									case EV_MSC:
 										break;
 
-										//analog joystick
+									//analog joystick
 									case EV_ABS:
 									{
 										//limit the amount of EV_ABS messages, so Menu core won't be laggy
@@ -4909,16 +4909,17 @@ int input_test(int getchar)
 												if (ev.code == 2) break;
 											}
 
-											printf("%04x:%04x:%02d P%d Input event: type=EV_ABS, Axis=%d [%d...%d], Offset=%d", input[dev].vid, input[dev].pid, i, input[dev].num, ev.code, absinfo.minimum, absinfo.maximum, ev.value);
+											//printf("%04x:%04x:%02d P%d Input event: type=EV_ABS, Axis=%d [%d...%d], Offset=%d", input[dev].vid, input[dev].pid, i, input[dev].num, ev.code, absinfo.minimum, absinfo.maximum, ev.value);
 											//if (absinfo.fuzz) printf(", fuzz = %d", absinfo.fuzz);
-											if (absinfo.resolution) printf(", res = %d", absinfo.resolution);
-											printf("\n");
+											//if (absinfo.resolution) printf(", res = %d", absinfo.resolution);
+											//printf("\n");
 										}
 									}
 									break;
 
 									default:
-										printf("%04x:%04x:%02d P%d Input event: type=%d, code=%d(0x%x), value=%d(0x%x)\n", input[dev].vid, input[dev].pid, i, input[dev].num, ev.type, ev.code, ev.code, ev.value, ev.value);
+										// printf("%04x:%04x:%02d P%d Input event: type=%d, code=%d(0x%x), value=%d(0x%x)\n", input[dev].vid, input[dev].pid, i, input[dev].num, ev.type, ev.code, ev.code, ev.value, ev.value);
+										break;
 									}
 
 									if (ev.type == EV_KEY && input[dev].num)

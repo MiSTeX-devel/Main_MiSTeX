@@ -2604,7 +2604,7 @@ int user_io_file_tx(const char* name, unsigned char index, char opensave, char m
 static char cfgstr[1024 * 10] = {};
 void user_io_read_confstr()
 {
-	printf("user_io_read_confstr\n");
+	printf("user_io_read_confstr, ");
 	spi_uio_cmd_cont(UIO_GET_STRING);
 
 	uint32_t j = 0;
@@ -2616,6 +2616,7 @@ void user_io_read_confstr()
 	}
 
 	cfgstr[j++] = 0;
+	printf("got: '%s'\n", cfgstr);
 	DisableIO();
 }
 

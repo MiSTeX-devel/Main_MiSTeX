@@ -58,6 +58,10 @@ int main(int argc, char *argv[])
 
 	printf("Version %s\n\n", version + 5);
 
+	printf("Loading menu core...\n");
+	int retval = system("openFPGALoader --cable ft4232 /media/fat/menu.rbf");
+	if (!retval) printf("Success!\n"); else printf("Failed!\n");
+
 	if (argc > 1) printf("Core path: %s\n", argv[1]);
 	if (argc > 2) printf("XML path: %s\n", argv[2]);
 

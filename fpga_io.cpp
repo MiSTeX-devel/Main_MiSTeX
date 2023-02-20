@@ -35,7 +35,7 @@ static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
 
 static const char *spi_device = "/dev/spidev1.0";
-#define SPI_SPEED 8000000
+#define SPI_SPEED 6000000
 #define SPI_TRACE    0
 #define SPI_EN_TRACE 0
 static uint8_t spi_mode = SPI_MODE_3;

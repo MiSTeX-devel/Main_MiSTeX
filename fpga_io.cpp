@@ -114,10 +114,9 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 	}
 
  	if (name[0] == '/') strcpy(path, name);
-   else sprintf(path, "%s/%s", !strcasecmp(name, "menu.rbf") ? getStorageDir(0) : getRootDir(), name);
+    else sprintf(path, "%s/%s", !strcasecmp(name, "menu.rbf") ? getStorageDir(0) : getRootDir(), name);
 
 	printf("Loading RBF: %s\n", path);
-
     sprintf(command, "openFPGALoader -c ft4232 %s", path);
 
 	int rbf = system(command);
@@ -128,10 +127,11 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 		snprintf(error,4096,"error uploading %s\n", path);
 		printf("Command failed: %s with code %d\n", command, rbf);
 		Info(error,5000);
+		app_restart(!strcasecmp(name, "menu.rbf") ? "menu.rbf" : path, xml);
 		return -1;
 	}
 
-	app_restart(!strcasecmp(name, "menu.rbf") ? "menu.rbf" : path, xml);
+	printf("Success!\n");
 	return ret;
 }
 

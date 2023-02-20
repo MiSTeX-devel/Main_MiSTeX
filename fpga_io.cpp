@@ -102,9 +102,10 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 {
 	OsdDisable();
 	static char path[1024];
+	static char command[2048];
 	int ret = 0;
 
-	if(cfg)
+	if (cfg)
 	{
 		fpga_core_reset(1);
 		make_env(name, cfg);
@@ -112,18 +113,20 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 		reboot(0);
 	}
 
-	printf("Loading RBF: %s\n", name);
+ 	if (name[0] == '/') strcpy(path, name);
+   else sprintf(path, "%s/%s", !strcasecmp(name, "menu.rbf") ? getStorageDir(0) : getRootDir(), name);
 
-	if(name[0] == '/') strcpy(path, name);
-	else sprintf(path, "%s/%s", !strcasecmp(name, "menu.rbf") ? getStorageDir(0) : getRootDir(), name);
+	printf("Loading RBF: %s\n", path);
 
-	// TODO
-	int rbf = -1; //open(path, O_RDONLY);
-	if (rbf < 0)
+    sprintf(command, "openFPGALoader -c ft4232 %s", path);
+
+	int rbf = system(command);
+
+	if (rbf != 0)
 	{
 		char error[4096];
-		snprintf(error,4096,"%s\nNot Found", name);
-		printf("Couldn't open file %s\n", path);
+		snprintf(error,4096,"error uploading %s\n", path);
+		printf("Command failed: %s with code %d\n", command, rbf);
 		Info(error,5000);
 		return -1;
 	}

@@ -94,32 +94,7 @@ static int fpgamgr_test_fpga_ready(void)
 static int make_env(const char *name, const char *cfg)
 {
 	printf("make_env\n");
-	void* buf = 0; //shmem_map(0x1FFFF000, 0x1000);
-	if (!buf) return -1;
-
-	volatile char* str = (volatile char*)buf;
-	memset((void*)str, 0, 0xF00);
-
-	*str++ = 0x21;
-	*str++ = 0x43;
-	*str++ = 0x65;
-	*str++ = 0x87;
-	*str++ = 'c';
-	*str++ = 'o';
-	*str++ = 'r';
-	*str++ = 'e';
-	*str++ = '=';
-	*str++ = '"';
-
-	for (uint32_t i = 0; i < strlen(name); i++)
-	{
-		*str++ = name[i];
-	}
-
-	*str++ = '"';
-	*str++ = '\n';
-	FileLoad(cfg, (void*)str, 0);
-	// shmem_unmap(buf, 0x1000);
+	// TODO
 	return 0;
 }
 

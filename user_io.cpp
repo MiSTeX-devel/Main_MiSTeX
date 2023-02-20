@@ -1168,7 +1168,7 @@ void ResetUART()
 
 uint16_t sdram_sz(int sz)
 {
-	int res = 0;
+	int res = 1; // hardwire SDRAM
 	printf("sdram_sz(%d)\n", sz);
 	// TODO: report SDRAM SIZE
 	return res;

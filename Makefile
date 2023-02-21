@@ -3,7 +3,7 @@ SHELL = /bin/bash -o pipefail
 
 # using gcc version 10.2.1
 
-BASE    = riscv64-unknown-linux-gnu
+BASE    = aarch64-linux-gnu
 
 CC      = $(BASE)-gcc
 LD      = $(BASE)-ld
@@ -48,8 +48,8 @@ OBJ	= $(C_SRC:.c=.c.o) $(CPP_SRC:.cpp=.cpp.o) $(IMG:.png=.png.o)
 DEP	= $(C_SRC:.c=.c.d) $(CPP_SRC:.cpp=.cpp.d)
 
 DFLAGS	= $(INCLUDE) -D_7ZIP_ST -DPACKAGE_VERSION=\"1.3.3\" -DFLAC_API_EXPORTS -DFLAC__HAS_OGG=0 -DHAVE_LROUND -DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_SYS_PARAM_H -DENABLE_64_BIT_WORDS=0 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DVDATE=\"`date +"%y%m%d"`\"
-CFLAGS	= $(DFLAGS) -w -Wextra -Wno-strict-aliasing -Wno-stringop-overflow -Wno-stringop-truncation -Wno-format-truncation -Wno-psabi -Wno-restrict -c -O3 -march=rv64gc -mabi=lp64d
-LFLAGS	= -lc -lstdc++ -lm -lrt $(IMLIB2_LIB) -Llib/bluetooth -lbluetooth -lpthread -mabi=lp64d
+CFLAGS	= $(DFLAGS) -w -Wextra -Wno-strict-aliasing -Wno-stringop-overflow -Wno-stringop-truncation -Wno-format-truncation -Wno-psabi -Wno-restrict -c -O3
+LFLAGS	= -lc -lstdc++ -lm -lrt $(IMLIB2_LIB) -Llib/bluetooth -lbluetooth -lpthread
 
 ifeq ($(PROFILING),1)
 	DFLAGS += -DPROFILING
@@ -78,8 +78,8 @@ clean:
 %.png.o: %.png
 	$(Q)$(info $<)
 	$(Q)$(LD) -r -b binary -o $@ $< 2>&1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):\([0-9]\+\):/\1(\2,\ \3):/g'
-	# change the flags to double flow RV64 (it's just data and the linker does not want to do it)
-	$(Q)printf '\x05' | dd of=$@ bs=1 seek=48 count=1 conv=notrunc
+	# change the flags to double flow RV64 (it's just data and the linker does not want to do it), comment out on aarch64
+	# $(Q)printf '\x05' | dd of=$@ bs=1 seek=48 count=1 conv=notrunc
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEP)

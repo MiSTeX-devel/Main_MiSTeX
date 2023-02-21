@@ -309,32 +309,212 @@ uint16_t fpga_spi_fast(uint16_t word)
 	return 0;
 }
 
-void fpga_spi_fast_block_write(const uint16_t *buf, uint32_t length)
+void fpga_spi_fast_block_write(const uint16_t *buffer, uint32_t length)
 {
 	printf("fpga_spi_fast_block_write(%d)\n", length);
+	uint32_t rem = length % 16;
+	length /= 16;
+	tx_buf[0] = 0; tx_buf[1] = 0;
+
+	ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+
+	uint8_t *buf = (uint8_t *)buffer;
+	while (length--) {
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+	}
+
+	while (rem--) {
+		tx_buf[1] = *buf++; tx_buf[0] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+	}
 }
 
 void fpga_spi_fast_block_read(uint16_t *buf, uint32_t length)
 {
-	printf("fpga_spi_fast_block_read(%d)\n", length);
+	uint32_t rem = length % 16;
+	length /= 16;
+	tx_buf[0] = 0; tx_buf[1] = 0;
+
+	ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+
+	while (length--) {
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+	}
+
+	while (rem--) {
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = (rx_buf[0] << 8) | rx_buf[1];
+	}
 }
 
 void fpga_spi_fast_block_write_8(const uint8_t *buf, uint32_t length)
 {
 	printf("fpga_spi_fast_block_write_8(%d)\n", length);
+	uint32_t rem = length % 16;
+	length /= 16;
+	tx_buf[0] = 0; tx_buf[1] = 0;
+
+	ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+
+	while (length--) {
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+	}
+
+	while (rem--) {
+		tx_buf[1] = *buf++;
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+	}
 }
 
 void fpga_spi_fast_block_read_8(uint8_t *buf, uint32_t length)
 {
-	printf("fpga_spi_fast_block_read_8(%d)\n", length);
+	printf("fpga_spi_fast_block_read(%d)\n", length);
+	uint32_t rem = length % 16;
+	length /= 16;
+	tx_buf[0] = 0; tx_buf[1] = 0;
+
+	ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+
+	while (length--) {
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+	}
+
+	while (rem--) {
+		ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+		*buf++ = rx_buf[1];
+	}
 }
 
 void fpga_spi_fast_block_write_be(const uint16_t *buf, uint32_t length)
 {
-	printf("fpga_spi_fast_block_write_be(%d)\n", length);
+	printf("*** fpga_spi_fast_block_write_be(%d) is not implemented ***\n", length);
 }
 
 void fpga_spi_fast_block_read_be(uint16_t *buf, uint32_t length)
 {
-	printf("fpga_spi_fast_block_read_be(%d)\n", length);
+	printf("*** fpga_spi_fast_block_read_be(%d) is not implemented ***\n", length);
 }

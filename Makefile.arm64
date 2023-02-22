@@ -78,9 +78,7 @@ clean:
 %.png.o: %.png
 	$(Q)$(info $<)
 	$(Q)$(LD) -r -b binary -o $@ $< 2>&1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):\([0-9]\+\):/\1(\2,\ \3):/g'
-	# change the flags to double flow RV64 (it's just data and the linker does not want to do it), comment out on aarch64
-	# $(Q)printf '\x05' | dd of=$@ bs=1 seek=48 count=1 conv=notrunc
-
+	
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEP)
 endif

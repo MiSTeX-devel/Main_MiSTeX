@@ -38,7 +38,6 @@ static const char *spi_device = "/dev/spidev1.0";
 #define SPI_SPEED 6000000
 #define SPI_TRACE    0
 #define SPI_EN_TRACE 0
-static uint8_t spi_mode = SPI_MODE_3;
 
 uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
 uint8_t rx_buf[2];    	// RX buffer (16 bit unsigned integer)
@@ -250,6 +249,8 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
+	static uint8_t spi_mode = SPI_MODE_3;
+
 	if (SPI_EN_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
 	if (mask & SSPI_FPGA_EN) gpiod_line_set_value(gpio_line_fpga_en, en);
 	if (mask & SSPI_OSD_EN)  gpiod_line_set_value(gpio_line_osd_en,  en);
@@ -263,9 +264,14 @@ void fpga_spi_en(uint32_t mask, uint32_t en)
 		}
 
 		if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
-			printf("ERROR: cannot set SPI mode\n");
+			printf("ERROR: cannot set SPI write mode\n");
 			return;
 		}
+		if (ioctl(spi_fd, SPI_IOC_RD_MODE, &spi_mode) == -1) {
+			printf("ERROR: cannot set SPI read mode\n");
+			return;
+		}
+
 	} else {
 		if (spi_fd >= 0) {
 			close(spi_fd);

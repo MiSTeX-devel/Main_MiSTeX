@@ -249,7 +249,7 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
-	static uint8_t spi_mode = SPI_MODE_3;
+	static uint8_t spi_mode = SPI_MODE_0;
 
 	if (SPI_EN_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
 	if (mask & SSPI_FPGA_EN) gpiod_line_set_value(gpio_line_fpga_en, en);

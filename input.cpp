@@ -4869,7 +4869,7 @@ int input_test(int getchar)
 									{
 										//keyboard, buttons
 									case EV_KEY:
-										printf("%04x:%04x:%02d P%d Input event: type=EV_KEY, code=%d(0x%x), value=%d\n", input[dev].vid, input[dev].pid, i, input[dev].num, ev.code, ev.code, ev.value);
+										//printf("%04x:%04x:%02d P%d Input event: type=EV_KEY, code=%d(0x%x), value=%d\n", input[dev].vid, input[dev].pid, i, input[dev].num, ev.code, ev.code, ev.value);
 										break;
 
 									case EV_REL:
@@ -4879,7 +4879,7 @@ int input_test(int getchar)
 										if (!timeout || CheckTimer(timeout))
 										{
 											timeout = GetTimer(20);
-											printf("%04x:%04x:%02d P%d Input event: type=EV_REL, Axis=%d, Offset=%d\n", input[dev].vid, input[dev].pid, i, input[dev].num, ev.code, ev.value);
+											//printf("%04x:%04x:%02d P%d Input event: type=EV_REL, Axis=%d, Offset=%d\n", input[dev].vid, input[dev].pid, i, input[dev].num, ev.code, ev.value);
 										}
 									}
 									break;

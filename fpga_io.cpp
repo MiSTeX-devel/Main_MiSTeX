@@ -65,29 +65,6 @@ static uint32_t *map_base;
 #define setbits_le32(addr, set)           writel( readl(addr) | (set), addr)
 #define clrbits_le32(addr, clear)         writel( readl(addr) & ~(clear), addr)
 
-/* Timeout count */
-#define FPGA_TIMEOUT_CNT		0x1000000
-
-/* Check whether FPGA Init_Done signal is high */
-static int is_fpgamgr_initdone_high(void)
-{
-	return 1;
-}
-
-/* Check whether FPGA is ready to be accessed */
-static int fpgamgr_test_fpga_ready(void)
-{
-	/* Check for init done signal */
-	if (!is_fpgamgr_initdone_high())
-		return 0;
-
-	/* Check again to avoid false glitches */
-	if (!is_fpgamgr_initdone_high())
-		return 0;
-
-	return 1;
-}
-
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 
 static int make_env(const char *name, const char *cfg)
@@ -241,7 +218,9 @@ void fpga_core_reset(int reset)
 
 int is_fpga_ready(int quick)
 {
-	return fpgamgr_test_fpga_ready();
+	// This used to check via HPS if the FPGA has been configured
+	// We don't have that in themMoment.
+	return true;
 }
 
 #define SSPI_STROBE  (1<<17)

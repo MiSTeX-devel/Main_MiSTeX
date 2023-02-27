@@ -83,7 +83,7 @@ int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
 
 	if (cfg)
 	{
-		fpga_core_reset(1);
+		fpga_core_reset();
 		make_env(name, cfg);
 		//do_bridge(0);
 		reboot(0);
@@ -173,7 +173,7 @@ int fpga_get_io_type()
 void reboot(int cold)
 {
 	sync();
-	fpga_core_reset(1);
+	fpga_core_reset();
 
 	usleep(500000);
 
@@ -195,7 +195,7 @@ char *getappname()
 void app_restart(const char *path, const char *xml)
 {
 	sync();
-	fpga_core_reset(1);
+	fpga_core_reset();
 
 	input_switch(0);
 	input_uinp_destroy();
@@ -210,10 +210,12 @@ void app_restart(const char *path, const char *xml)
 	reboot(1);
 }
 
-void fpga_core_reset(int reset)
+void fpga_core_reset()
 {
-	printf("fpga_core_reset(%d)\n", reset);
-	gpiod_line_set_value(gpio_line_fpga_reset, reset);
+	printf("fpga_core_reset()\n");
+	gpiod_line_set_value(gpio_line_fpga_reset, 1);
+	usleep(100000);
+	gpiod_line_set_value(gpio_line_fpga_reset, 0);
 }
 
 int is_fpga_ready(int quick)
@@ -263,7 +265,7 @@ void fpga_wait_to_reset()
 	printf("FPGA is not ready. JTAG uploading?\n");
 	printf("Waiting for FPGA to be ready...\n");
 
-	fpga_core_reset(1);
+	fpga_core_reset();
 
 	while (!is_fpga_ready(0))
 	{

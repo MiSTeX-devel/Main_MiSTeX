@@ -24,7 +24,7 @@ void fpga_set_led(uint32_t on);
 int  fpga_get_buttons();
 int fpga_get_io_type();
 
-void fpga_core_reset(int reset);
+void fpga_core_reset();
 int fpga_core_id();
 int is_fpga_ready(int quick);
 

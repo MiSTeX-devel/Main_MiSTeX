@@ -36,7 +36,7 @@ static struct gpiod_line *gpio_line_io_en;
 
 static const char *spi_device = "/dev/spidev1.0";
 #define SPI_SPEED 8000000
-#define SPI_TRACE    0
+const static bool spi_trace = 0;
 #define SPI_EN_TRACE 0
 
 uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
@@ -276,7 +276,7 @@ void fpga_wait_to_reset()
 
 uint16_t fpga_spi(uint16_t word)
 {
-	if (SPI_TRACE) printf("fpga_spi(%04x)", word);
+	if (spi_trace) printf("fpga_spi(%04x)", word);
 	tx_buf[0] = word >> 8;
 	tx_buf[1] = word & 0xff;
 	if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer) < 1)
@@ -285,13 +285,13 @@ uint16_t fpga_spi(uint16_t word)
 		return -1;
 	}
 	uint16_t result = (rx_buf[0] << 8) | rx_buf[1];
-	if (SPI_TRACE) printf(" => %04x\n", result);
+	if (spi_trace) printf(" => %04x\n", result);
 	return result;
 }
 
 uint16_t fpga_spi_fast(uint16_t word)
 {
-	if (SPI_TRACE) printf("fpga_spi_fast(%04x)\n", word);
+	if (spi_trace) printf("fpga_spi_fast(%04x)\n", word);
 	fpga_spi(word);
 	return 0;
 }

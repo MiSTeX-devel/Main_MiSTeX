@@ -2314,6 +2314,7 @@ static int store_custom_video_mode(char* vcfg, vmode_custom_t *v)
 
 static void fb_init()
 {
+	/* TODO: no FB support at the moment 
 	if (!fb_base)
 	{
 		//fb_base = (volatile uint32_t*)shmem_map(FB_ADDR, FB_SIZE * 4 * 3);
@@ -2323,6 +2324,7 @@ static void fb_init()
 		}
 	}
 	spi_uio_cmd16(UIO_SET_FBUF, 0);
+	*/
 }
 
 static void video_mode_load()

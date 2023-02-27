@@ -102,8 +102,7 @@ void spi_uio_cmd32_cont(uint8_t cmd, uint32_t parm)
 uint16_t spi_uio_cmd_cont(uint16_t cmd)
 {
 	EnableIO();
-	spi_w(cmd);
-	return spi_w(0);
+	return spi_w(cmd);
 }
 
 uint16_t spi_uio_cmd(uint16_t cmd)

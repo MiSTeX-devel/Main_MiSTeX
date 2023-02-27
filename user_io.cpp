@@ -2607,6 +2607,9 @@ void user_io_read_confstr()
 	printf("user_io_read_confstr, ");
 	spi_uio_cmd_cont(UIO_GET_STRING);
 
+	// read one null word until the result shows up
+	spi_w(0);
+
 	uint32_t j = 0;
 	while (j < sizeof(cfgstr) - 1)
 	{

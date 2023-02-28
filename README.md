@@ -1,3 +1,3 @@
-# Main_MiSTy Main Binary Repo
+# Main_MiSTeX Main Binary Repo
 
-This repo serves as the home for the MiSTy Main binaries.
+This repo serves as the home for the MiSTeX Main binaries.

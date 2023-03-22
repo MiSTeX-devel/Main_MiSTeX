@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
 	printf("\nMinimig by Dennis van Weeren");
 	printf("\nARM Controller by Jakub Bednarski");
 	printf("\nMiSTer code by Sorgelig\n\n");
+	printf("\nMiSTeX port by Hans Baier\n\n");
 
 	printf("Version %s\n\n", version + 5);
 

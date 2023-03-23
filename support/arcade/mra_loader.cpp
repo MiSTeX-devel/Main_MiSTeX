@@ -1169,10 +1169,9 @@ static const char *get_rbf(const char *xml, int arcade)
 	while ((entry = readdir(dir)) != NULL)
 	{
 		len = strlen(entry->d_name);
-		if (entry->d_type != DT_DIR && len > 4 && !strcasecmp(entry->d_name+len-4, cfg.bitstream_extension))
+		if (entry->d_type != DT_DIR && len > 4 && !strcasecmp(entry->d_name+len-4, ".rbf"))
 		{
 			static char newstring[kBigTextSize];
-			//printf("entry name: %s\n",entry->d_name);
 
 			if (arcade)
 			{
@@ -1202,7 +1201,16 @@ static const char *get_rbf(const char *xml, int arcade)
 	if (lastfound[0]) snprintf(rbfname, sizeof(rbfname), "%s/%s", dirname, lastfound);
 	closedir(dir);
 
-	return lastfound[0] ? rbfname : NULL;
+	if (!lastfound[0]) return NULL;
+
+	auto ext_pos = strchr(rbfname, '.');
+	if (!ext_pos) return NULL;
+
+	ext_pos[1] = cfg.bitstream_extension[1];
+	ext_pos[2] = cfg.bitstream_extension[2];
+	ext_pos[3] = cfg.bitstream_extension[3];
+
+	return rbfname;
 }
 
 int xml_load(const char *xml)

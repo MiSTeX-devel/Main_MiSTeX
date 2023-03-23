@@ -1034,7 +1034,7 @@ void setStorage(int dev)
 {
 	device = 0;
 	FileSave(CONFIG_DIR"/device.bin", &dev, sizeof(int));
-	fpga_load_rbf("menu.rbf");
+	fpga_load_rbf(cfg.menu_core_filename);
 }
 
 static int orig_device = 0;
@@ -1278,7 +1278,7 @@ static void get_display_name(direntext_t *dext, const char *ext, int options)
 
 	int len = strlen(dext->altname);
 	int xml = (len > 4 && (!strcasecmp(dext->altname + len - 4, ".mgl") || !strcasecmp(dext->altname + len - 4, ".mra")));
-	int rbf = (len > 4 && !strcasecmp(dext->altname + len - 4, ".rbf"));
+	int rbf = (len > 4 && !strcasecmp(dext->altname + len - 4, cfg.bitstream_extension));
 	if (rbf || xml)
 	{
 		dext->altname[len - 4] = 0;
@@ -1609,7 +1609,7 @@ int ScanDirectory(char* path, int mode, const char *extension, int options, cons
 					// skip hidden files
 					if (!strncasecmp(de->d_name, ".", 1)) continue;
 					//skip non-selectable files
-					if (!strcasecmp(de->d_name, "menu.rbf")) continue;
+					if (!strcasecmp(de->d_name, cfg.menu_core_filename)) continue;
 					if (!strncasecmp(de->d_name, "menu_20", 7)) continue;
 					if (!strcasecmp(de->d_name, "boot.rom")) continue;
 
@@ -1667,13 +1667,13 @@ int ScanDirectory(char* path, int mode, const char *extension, int options, cons
 					continue;
 				}
 
-        {
-			      direntext_t dext;
-				    memset(&dext, 0, sizeof(dext));
-				    memcpy(&dext.de, de, sizeof(dext.de));
-				    get_display_name(&dext, extension, options);
-				    DirItem.push_back(dext);
-        }
+				{
+					direntext_t dext;
+					memset(&dext, 0, sizeof(dext));
+					memcpy(&dext.de, de, sizeof(dext.de));
+					get_display_name(&dext, extension, options);
+					DirItem.push_back(dext);
+				}
 			}
 		}
 

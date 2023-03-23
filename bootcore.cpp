@@ -18,13 +18,13 @@ char bootcoretype[64];
 bool isExactcoreName(char *path)
 {
 	char *spl = strrchr(path, '.');
-	return (spl && (!strcmp(spl, ".rbf") || !strcmp(spl, ".mra") || !strcmp(spl, ".mgl")));
+	return (spl && (!strcmp(spl, cfg.bitstream_extension) || !strcmp(spl, ".mra") || !strcmp(spl, ".mgl")));
 }
 
 char *getcoreName(char *path)
 {
 	char *spl = strrchr(path, '.');
-	if (spl && !strcmp(spl, ".rbf"))
+	if (spl && !(strcmp(spl, cfg.bitstream_extension)))
 	{
 		*spl = '\0';
 	}
@@ -148,7 +148,7 @@ char *findCore(const char *name, char *coreName, int indent)
 			snprintf(path, 256, "%s/%s", name, entry->d_name);
 			if (strstr(path, coreName) != NULL) {
 				spl = strrchr(path, '.');
-				if (spl && (!strcmp(spl, ".rbf") || !strcmp(spl, ".mra") || !strcmp(spl, ".mgl")))
+				if (spl && (!strcmp(spl, cfg.bitstream_extension) || !strcmp(spl, ".mra") || !strcmp(spl, ".mgl")))
 				{
 					closedir(dir);
 					return path;
@@ -209,7 +209,7 @@ void bootcore_init(const char *path)
 					isXmlName(bootcore) ? xml_load(bootcore) : fpga_load_rbf(bootcore);
 				}
 
-				strcpy(cfg.bootcore, strcmp(bootcore, "menu.rbf") ? bootcore : "");
+				strcpy(cfg.bootcore, strcmp(bootcore, cfg.menu_core_filename) ? bootcore : "");
 				return;
 			}
 		}

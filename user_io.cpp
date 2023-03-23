@@ -2757,7 +2757,7 @@ void user_io_set_ini(int ini_num)
 
 	if (!name[0])
 	{
-		name = "menu.rbf";
+		name = cfg.menu_core_filename;
 		xml = NULL;
 	}
 
@@ -3373,7 +3373,7 @@ void user_io_poll()
 
 	if (!coldreset_req && prev_coldreset_req)
 	{
-		fpga_load_rbf("menu.rbf");
+		fpga_load_rbf(cfg.menu_core_filename);
 	}
 
 	prev_coldreset_req = coldreset_req;

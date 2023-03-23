@@ -380,7 +380,14 @@ void SelectFile(const char* path, const char* pFileExt, int Options, unsigned ch
 			if(strlen(selPath)) strcat(selPath, "/");
 			strcat(selPath, get_rbf_name());
 		}
-		pFileExt = "RBFMRAMGL";
+
+		char file_extensions[32];
+		for (int i = 1; i <=3; i++)
+		{
+			file_extensions[i-1] = toupper(cfg.bitstream_extension[i]);
+		}
+		strcat(file_extensions, "MRAMGL");
+		pFileExt = file_extensions;
 		home_dir = NULL;
 	}
 	else if (Options & SCANO_TXT)
@@ -730,7 +737,7 @@ const char* get_rbf_name_bootcore(char *str)
 	if (!p) return str;
 
 	char *spl = strrchr(p + 1, '.');
-	if (spl && (!strcmp(spl, ".rbf") || !strcmp(spl, ".mra") || !strcmp(spl, ".mgl")))
+	if (spl && (!strcmp(spl, cfg.bitstream_extension) || !strcmp(spl, ".mra") || !strcmp(spl, ".mgl")))
 	{
 		*spl = 0;
 	}
@@ -2629,7 +2636,7 @@ void HandleUI(void)
 			}
 		}
 
-		if(!hold_cnt && reboot_req) fpga_load_rbf("menu.rbf");
+		if(!hold_cnt && reboot_req) fpga_load_rbf(cfg.menu_core_filename);
 		break;
 
 	case MENU_VIDEOPROC1:
@@ -4751,7 +4758,7 @@ void HandleUI(void)
 				strcat(selPath, flist_SelectedItem()->de.d_name);
 			}
 
-			if (!strcasecmp(fs_pFileExt, "RBF")) selPath[0] = 0;
+			if (!strcasecmp(fs_pFileExt, &cfg.bitstream_extension[1])) selPath[0] = 0;
 			menustate = fs_MenuCancel;
 			helptext_idx = 0;
 		}
@@ -6209,7 +6216,7 @@ void HandleUI(void)
 			menustate = MENU_MISC1;
 		}
 
-		if (!hold_cnt && reboot_req) fpga_load_rbf("menu.rbf");
+		if (!hold_cnt && reboot_req) fpga_load_rbf(cfg.menu_core_filename);
 		break;
 
 	case MENU_JOYSYSMAP:

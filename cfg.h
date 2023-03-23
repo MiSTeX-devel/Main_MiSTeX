@@ -91,6 +91,8 @@ typedef struct {
 	char vga_mode[16];
 	char vga_mode_int;
 	char ntsc_mode;
+	char bitstream_extension[5];
+	char menu_core_filename[10];
 } cfg_t;
 
 extern cfg_t cfg;

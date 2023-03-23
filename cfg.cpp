@@ -119,6 +119,9 @@ static const ini_var_t ini_vars[] =
 	{ "HDR_AVG_NITS", (void*)(&(cfg.hdr_avg_nits)), UINT16, 100, 10000},
 	{ "VGA_MODE", (void*)(&(cfg.vga_mode)), STRING, 0, sizeof(cfg.vga_mode) - 1 },
 	{ "NTSC_MODE", (void *)(&(cfg.ntsc_mode)), UINT8, 0, 2},
+	// MiSTeX configuration variables
+	{ "BITSTREAM_EXTENSION", (void*)(&(cfg.bitstream_extension)), STRING, 0, sizeof(cfg.bitstream_extension) - 1 },
+	{ "MENU_CORE_FILENAME", (void*)(&(cfg.menu_core_filename)), STRING, 0, sizeof(cfg.menu_core_filename) - 1 },
 };
 
 static const int nvars = (int)(sizeof(ini_vars) / sizeof(ini_var_t));
@@ -530,6 +533,14 @@ void cfg_parse()
 		if (!strcasecmp(cfg.vga_mode, "svideo")) cfg.vga_mode_int = 2;
 		if (!strcasecmp(cfg.vga_mode, "cvbs")) cfg.vga_mode_int = 3;
 	}
+
+	if (!strlen(cfg.bitstream_extension))
+	{
+		strcpy(cfg.bitstream_extension, ".rbf");
+	}
+
+	strcpy(cfg.menu_core_filename, "menu");
+	strcat(cfg.menu_core_filename, cfg.bitstream_extension);
 }
 
 bool cfg_has_video_sections()

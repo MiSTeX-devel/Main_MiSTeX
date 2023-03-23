@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <linux/spi/spidev.h>
 
+#include "cfg.h"
 #include "fpga_io.h"
 #include "file_io.h"
 #include "input.h"
@@ -74,41 +75,42 @@ static int make_env(const char *name, const char *cfg)
 	return 0;
 }
 
-int fpga_load_rbf(const char *name, const char *cfg, const char *xml)
-{
-	OsdDisable();
-	static char path[1024];
-	static char command[2048];
-	int ret = 0;
+int fpga_load_rbf(const char *name, const char *config, const char *xml) {
+  OsdDisable();
+  static char path[1024];
+  static char command[2048];
+  int ret = 0;
 
-	if (cfg)
-	{
-		fpga_core_reset();
-		make_env(name, cfg);
-		//do_bridge(0);
-		reboot(0);
-	}
+  if (config) {
+    fpga_core_reset();
+    make_env(name, config);
+    // do_bridge(0);
+    reboot(0);
+  }
 
- 	if (name[0] == '/') strcpy(path, name);
-    else sprintf(path, "%s/%s", !strcasecmp(name, "menu.rbf") ? getStorageDir(0) : getRootDir(), name);
+  if (name[0] == '/')
+    strcpy(path, name);
+  else
+    sprintf(path, "%s/%s",
+            !strcasecmp(name, cfg.menu_core_filename) ? getStorageDir(0) : getRootDir(),
+            name);
 
-	printf("Loading RBF: %s\n", path);
-    sprintf(command, "openFPGALoader -c dirtyJtag %s", path);
+  printf("Loading bitstream: %s\n", path);
+  sprintf(command, "openFPGALoader -c dirtyJtag %s", path);
 
-	int rbf = system(command);
+  int rbf = system(command);
 
-	if (rbf != 0)
-	{
-		char error[4096];
-		snprintf(error,4096,"error uploading %s\n", path);
-		printf("Command failed: %s with code %d\n", command, rbf);
-		Info(error,5000);
-		return -1;
-	}
+  if (rbf != 0) {
+    char error[4096];
+    snprintf(error, 4096, "error uploading %s\n", path);
+    printf("Command failed: %s with code %d\n", command, rbf);
+    Info(error, 5000);
+    return -1;
+  }
 
-	printf("Success!\n");
-	app_restart(!strcasecmp(name, "menu.rbf") ? "menu.rbf" : path, xml);
-	return ret;
+  printf("Success!\n");
+  app_restart(!strcasecmp(name, cfg.menu_core_filename) ? cfg.menu_core_filename : path, xml);
+  return ret;
 }
 
 int fpga_io_init()

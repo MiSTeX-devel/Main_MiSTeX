@@ -1097,7 +1097,7 @@ void video_loadPreset(char *name, bool save)
 
 static void hdmi_config_set_spd(bool val)
 {
-	int fd = i2c_open(0x39, 0);
+	int fd = i2c_open(0x39, 2);
 	if (fd >= 0)
 	{
 		uint8_t packet_val = i2c_smbus_read_byte_data(fd, 0x40);
@@ -1113,7 +1113,7 @@ static void hdmi_config_set_spd(bool val)
 
 static void hdmi_config_set_spare(int packet, bool enabled)
 {
-	int fd = i2c_open(0x39, 0);
+	int fd = i2c_open(0x39, 2);
 	uint8_t mask = packet == 0 ? 0x01 : 0x02;
 	if (fd >= 0)
 	{
@@ -1345,7 +1345,7 @@ static void hdmi_config_set_csc()
 		0xC3, (uint8_t)(clipMax & 0xff)
 	};
 
-	int fd = i2c_open(0x39, 0);
+	int fd = i2c_open(0x39, 2);
 	if (fd >= 0)
 	{
 		for (uint i = 0; i < sizeof(csc_data); i += 2)
@@ -1502,7 +1502,7 @@ static void hdmi_config_init()
 		0x09, 0x0A,				//
 	};
 
-	int fd = i2c_open(0x39, 0);
+	int fd = i2c_open(0x39, 2);
 	if (fd >= 0)
 	{
 		for (uint i = 0; i < sizeof(init_data); i += 2)
@@ -1634,7 +1634,7 @@ static void hdmi_config_set_mode(vmode_custom_t *vm)
 		0x3C, vic_mode,			// VIC
 	};
 
-	int fd = i2c_open(0x39, 0);
+	int fd = i2c_open(0x39, 2);
 	if (fd >= 0)
 	{
 		for (uint i = 0; i < sizeof(init_data); i += 2)
@@ -1749,7 +1749,7 @@ static int is_edid_valid()
 
 static int get_active_edid()
 {
-	int fd = i2c_open(0x39, 0);
+	int fd = i2c_open(0x39, 2);
 	if (fd < 0)
 	{
 		printf("EDID: cannot find main i2c device\n");
@@ -1771,7 +1771,7 @@ static int get_active_edid()
 		i2c_smbus_write_byte_data(fd, 0xC9, 0x13);
 	}
 	i2c_close(fd);
-	fd = i2c_open(0x3f, 0);
+	fd = i2c_open(0x3f, 2);
 	if (fd < 0)
 	{
 		printf("EDID: cannot find i2c device.\n");
@@ -2045,7 +2045,7 @@ static void set_vrr_mode()
 	};
 
 	int res = 0;
-	int fd = i2c_open(0x38, 0);
+	int fd = i2c_open(0x38, 2);
 	if (fd >= 0)
 	{
 		if (use_vrr == VRR_FREESYNC)

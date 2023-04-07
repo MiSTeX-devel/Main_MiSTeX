@@ -121,6 +121,7 @@ static const ini_var_t ini_vars[] =
 	{ "NTSC_MODE", (void *)(&(cfg.ntsc_mode)), UINT8, 0, 2},
 	// MiSTeX configuration variables
 	{ "BITSTREAM_EXTENSION", (void*)(&(cfg.bitstream_extension)), STRING, 0, sizeof(cfg.bitstream_extension) - 1 },
+	{ "FPGALOADER_CMD", (void*)(&(cfg.fpgaloader_cmd)), STRING, 0, sizeof(cfg.fpgaloader_cmd) - 1 },
 	{ "MENU_CORE_FILENAME", (void*)(&(cfg.menu_core_filename)), STRING, 0, sizeof(cfg.menu_core_filename) - 1 },
 };
 
@@ -537,6 +538,11 @@ void cfg_parse()
 	if (!strlen(cfg.bitstream_extension))
 	{
 		strcpy(cfg.bitstream_extension, ".rbf");
+	}
+
+	if (!strlen(cfg.fpgaloader_cmd))
+	{
+		strcpy(cfg.fpgaloader_cmd, "openFPGALoader -c dirtyJtag");
 	}
 
 	strcpy(cfg.menu_core_filename, "menu");

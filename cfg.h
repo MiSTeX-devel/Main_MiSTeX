@@ -92,6 +92,7 @@ typedef struct {
 	char vga_mode_int;
 	char ntsc_mode;
 	char bitstream_extension[5];
+	char fpgaloader_cmd[128];
 	char menu_core_filename[10];
 } cfg_t;
 

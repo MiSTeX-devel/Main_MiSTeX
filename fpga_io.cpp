@@ -96,7 +96,7 @@ int fpga_load_rbf(const char *name, const char *config, const char *xml) {
             name);
 
   printf("Loading bitstream: %s\n", path);
-  sprintf(command, "openFPGALoader -c dirtyJtag %s", path);
+  sprintf(command, "%s %s", cfg.fpgaloader_cmd, path);
 
   int rbf = system(command);
 

@@ -5,14 +5,16 @@ project(MiSTer LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS_DEBUG "-g ${CMAKE_CXX_FLAGS_DEBUG}")
-if (ENABLE_OPTIM)
-	set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")
-endif()
 
-exec_program("date" ARGS "+\"%y%m%d\"" OUTPUT_VARIABLE VDATE)
-set(DFLAGS "-D_7ZIP_ST -DPACKAGE_VERSION=\"1.3.3\" -DFLAC_API_EXPORTS -DFLAC__HAS_OGG=0 -DHAVE_LROUND -DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_SYS_PARAM_H -DENABLE_64_BIT_WORDS=0 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DVDATE=\"${VDATE}\"")
-set(CMAKE_CXX_FLAGS "${DFLAGS} ${CMAKE_CXX_FLAGS}")
-set(CMAKE_C_FLAGS "${DFLAGS} ${CMAKE_C_FLAGS}")
+exec_program("date" ARGS "+\"%y%m%d\"" OUTPUT_VARIABLE VDATE_OUT)
+set(VDATE "\\\"${VDATE_OUT}\\\"")
+set(DFLAGS "-D_7ZIP_ST -DPACKAGE_VERSION=\"1.3.3\" -DFLAC_API_EXPORTS -DFLAC__HAS_OGG=0 -DHAVE_LROUND -DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_SYS_PARAM_H -DENABLE_64_BIT_WORDS=0 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DVDATE=${VDATE}")
+set(CFLAGS "${DFLAGS} -w -Wextra -Wno-strict-aliasing -Wno-stringop-overflow -Wno-stringop-truncation -Wno-format-truncation -Wno-psabi -Wno-restrict -O3 -march=rv64gc -mabi=lp64d")
+
+#set(IMLIB2_LIB "-Llib/imlib2 -lfreetype -lbz2 -lpng16 -lz -lImlib2 -Llib/gpiod -lgpiod")
+set(LFLAGS "-lc -lstdc++ -lm -lrt -lpthread -mabi=lp64d")
+set(CMAKE_CXX_FLAGS "${CFLAGS} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "${CFLAGS} ${CMAKE_C_FLAGS}")
 
 set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ -static ${CMAKE_EXE_LINKER_FLAGS}")
 set(BUILD_SHARED_LIBS OFF)
@@ -47,10 +49,17 @@ include_directories(
     lib/lzma
     lib/libchdr/include
     lib/serial_server/library
-    ${BLUETOOTH_INCLUDE_DIRS}
+    lib/bluetooth
     ${FLAC_INCLUDE_DIRS}
     ${GPIOD_INCLUDE_DIRS}
     ${IMLIB2_INCLUDE_DIRS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+	${BLUETOOTH_LIBRARIES}
+	${FLAC_LIBRARIES}
+	${GPIOD_LIBRARIES}
+	${IMLIB2_LIBRARIES}
 )
 
 #target_link_libraries()

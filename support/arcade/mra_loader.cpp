@@ -1169,7 +1169,7 @@ static const char *get_rbf(const char *xml, int arcade)
 	while ((entry = readdir(dir)) != NULL)
 	{
 		len = strlen(entry->d_name);
-		if (entry->d_type != DT_DIR && len > 4 && !strcasecmp(entry->d_name+len-4, ".rbf"))
+		if (entry->d_type != DT_DIR && len > 4 && !strcasecmp(entry->d_name+len-4, cfg.bitstream_extension))
 		{
 			static char newstring[kBigTextSize];
 

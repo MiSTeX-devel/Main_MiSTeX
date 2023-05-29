@@ -42,7 +42,7 @@ CPP_SRC = $(wildcard *.cpp) \
 
 IMG =     $(wildcard *.png)
 
-IMLIB2_LIB  = -Llib/imlib2 -lfreetype -lbz2 -lpng16 -lz -lImlib2 -Llib/gpiod -lgpiod
+IMLIB2_LIB  = -Llib/imlib2/riscv -lfreetype -lbz2 -lpng16 -lz -lImlib2 -Llib/gpiod/riscv -lgpiod
 
 OBJ	= $(C_SRC:.c=.c.o) $(CPP_SRC:.cpp=.cpp.o) $(IMG:.png=.png.o)
 DEP	= $(C_SRC:.c=.c.d) $(CPP_SRC:.cpp=.cpp.d)

@@ -3,7 +3,8 @@ SHELL = /bin/bash -o pipefail
 
 # using gcc version 10.2.1
 
-BASE    = aarch64-linux-gnu
+BASE    = arm-linux-gnueabihf
+#aarch64-linux-gnu
 
 CC      = $(BASE)-gcc
 LD      = $(BASE)-ld
@@ -34,7 +35,7 @@ C_SRC =   $(wildcard *.c) \
           $(wildcard ./lib/lzma/*.c) \
           $(wildcard ./lib/flac/src/*.c) \
           $(wildcard ./lib/libchdr/*.c) # \
-          # lib/libco/arm.c
+          lib/libco/arm.c
 
 CPP_SRC = $(wildcard *.cpp) \
           $(wildcard ./lib/serial_server/library/*.cpp) \
@@ -42,7 +43,7 @@ CPP_SRC = $(wildcard *.cpp) \
 
 IMG =     $(wildcard *.png)
 
-IMLIB2_LIB  = -Llib/imlib2 -lfreetype -lbz2 -lpng16 -lz -lImlib2 -Llib/gpiod -lgpiod
+IMLIB2_LIB  = -Llib/imlib2/arm -lfreetype -lbz2 -lpng16 -lz -lImlib2 -Llib/gpiod/arm/ -lgpiod
 
 OBJ	= $(C_SRC:.c=.c.o) $(CPP_SRC:.cpp=.cpp.o) $(IMG:.png=.png.o)
 DEP	= $(C_SRC:.c=.c.d) $(CPP_SRC:.cpp=.cpp.d)

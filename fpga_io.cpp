@@ -40,13 +40,13 @@ static const char *spi_device = "/dev/spidev1.0";
 const static bool spi_trace = 0;
 #define SPI_EN_TRACE 0
 
-uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
-uint8_t rx_buf[2];    	// RX buffer (16 bit unsigned integer)
+uint8_t tx_buf[3];    	// TX buffer (16 bit unsigned integer)
+uint8_t rx_buf[3];    	// RX buffer (16 bit unsigned integer)
 
 struct spi_ioc_transfer spi_transfer =
 {	.tx_buf = (unsigned long)tx_buf,
 	.rx_buf = (unsigned long)rx_buf,
-	.len = 2,
+	.len = 3,
 	.speed_hz = SPI_SPEED,
 	.delay_usecs = 0,
 	.bits_per_word = 8,
@@ -286,9 +286,12 @@ uint16_t fpga_spi(uint16_t word)
 		printf("Can't send SPI message");
 		return -1;
 	}
-	uint16_t result = (rx_buf[0] << 8) | rx_buf[1];
-	if (spi_trace) printf(" => %04x\n", result);
-	return result;
+
+	// MISO is delayed by 1 bit compared to MOSI,
+	// so we need to right shift 7 instead of 8
+	uint32_t result = ((rx_buf[0] << 16) | (rx_buf[1] << 8) | rx_buf[2]) >> 7;
+	if (spi_trace) printf(" => %06x\n", result);
+	return (uint16_t)result;
 }
 
 uint16_t fpga_spi_fast(uint16_t word)

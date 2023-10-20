@@ -25,10 +25,18 @@
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
 
 static const char *gpio_chip_name = "gpiochip0";
+#ifdef RASPBERRY_PI
+#define GPIIO_PIN_FPGA_RESET 22
+#define GPIIO_PIN_FPGA_EN    23
+#define GPIIO_PIN_OSD_EN     24
+#define GPIIO_PIN_IO_EN      25
+#else // Sipeed Lichee RV
 #define GPIIO_PIN_FPGA_RESET 102
 #define GPIIO_PIN_FPGA_EN    103
 #define GPIIO_PIN_OSD_EN     104
 #define GPIIO_PIN_IO_EN      105
+#endif
+
 static struct gpiod_chip *gpio_chip;
 static struct gpiod_line *gpio_line_fpga_reset;
 static struct gpiod_line *gpio_line_fpga_en;

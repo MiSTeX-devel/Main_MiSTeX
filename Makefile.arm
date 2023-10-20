@@ -13,7 +13,8 @@ else
 	Q := @
 endif
 
-SDK_SYSROOT = arm-buildroot-linux-gnueabihf_sdk-buildroot/arm-buildroot-linux-gnueabihf/sysroot/
+SDK_DIR = arm-buildroot-linux-gnueabihf_sdk-buildroot
+SDK_SYSROOT = $(SDK_DIR)/arm-buildroot-linux-gnueabihf/sysroot/
 SDK_LIB = $(SDK_SYSROOT)/usr/lib
 
 INCLUDE	= -I./
@@ -71,7 +72,7 @@ sdk:
 clean:
 	$(Q)rm -f *.elf *.map *.lst *.user *~ $(PRJ)
 	$(Q)rm -rf obj DTAR* x64
-	$(Q)find . \( -name '*.o' -o -name '*.d' -o -name '*.bak' -o -name '*.rej' -o -name '*.org' \) -exec rm -f {} \;
+	$(Q)find . \( -name '*.o' -o -name '*.d' -o -name '*.bak' -o -name '*.rej' -o -name '*.org' \) | grep -v $(SDK_DIR) | xargs rm -vf
 
 %.c.o: %.c
 	$(Q)$(info $<)

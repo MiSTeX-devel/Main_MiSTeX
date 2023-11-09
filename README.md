@@ -14,7 +14,7 @@ To build:
 2. build it
 3. come into this directory
 4. `make sdk`
-5. `make -f Makefile.arm -j`
+5. `make -j`
 
 Then you have the MiSTer executable, which you need to copy
 to /media/fat/ on the MiSTeX Linux system

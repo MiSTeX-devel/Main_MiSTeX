@@ -10,11 +10,10 @@ Currently only the raspberry Pi zero is supported.
 
 To build:
 
-1. clone the MiSTeX-buildroot repo in the parent folder of this one
-2. build it
-3. come into this directory
-4. `make sdk`
-5. `make -j`
+1. clone the MiSTeX-buildroot repo in the parent folder of this one and build it, OR unpack the SDK from the releases of this repo and unpack it here
+2. come into this directory
+3. `make sdk`
+4. `make -j`
 
 Then you have the MiSTer executable, which you need to copy
 to /media/fat/ on the MiSTeX Linux system

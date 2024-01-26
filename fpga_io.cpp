@@ -35,7 +35,7 @@ static const char *spi_device = "/dev/spidev1.0";
 #endif
 
 #ifdef ORANGEPI_ZERO_2W
-static const char *spi_device = "/dev/spidev1.1";
+static const char *spi_device = "/dev/spidev1.0";
 #define GPIIO_PIN_FPGA_RESET 261
 #define GPIIO_PIN_FPGA_EN    270
 #define GPIIO_PIN_OSD_EN     228

@@ -25,12 +25,25 @@
 #define fatal(x) /*munmap((void*)map_base, FPGA_REG_SIZE);*/ close(fd); exit(x)
 
 static const char *gpio_chip_name = "gpiochip0";
+
 #ifdef RASPBERRY_PI
+static const char *spi_device = "/dev/spidev1.0";
 #define GPIIO_PIN_FPGA_RESET 22
 #define GPIIO_PIN_FPGA_EN    23
 #define GPIIO_PIN_OSD_EN     24
 #define GPIIO_PIN_IO_EN      25
-#else // Sipeed Lichee RV
+#endif
+
+#ifdef ORANGEPI_ZERO_2W
+static const char *spi_device = "/dev/spidev1.1";
+#define GPIIO_PIN_FPGA_RESET 261
+#define GPIIO_PIN_FPGA_EN    270
+#define GPIIO_PIN_OSD_EN     228
+#define GPIIO_PIN_IO_EN      262
+#endif
+
+#ifdef SIPEED_LICHEE_RV
+static const char *spi_device = "/dev/spidev1.0";
 #define GPIIO_PIN_FPGA_RESET 102
 #define GPIIO_PIN_FPGA_EN    103
 #define GPIIO_PIN_OSD_EN     104
@@ -43,7 +56,6 @@ static struct gpiod_line *gpio_line_fpga_en;
 static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
 
-static const char *spi_device = "/dev/spidev1.0";
 #define SPI_SPEED 8000000
 const static bool spi_trace = 0;
 #define SPI_EN_TRACE 0

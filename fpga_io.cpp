@@ -28,6 +28,7 @@ static const char *gpio_chip_name = "gpiochip0";
 static const char *spi_device = "/dev/spidev1.0";
 
 #ifdef RASPBERRY_PI
+#define SPI_SPEED 8000000
 #define GPIIO_PIN_FPGA_RESET 22
 #define GPIIO_PIN_FPGA_EN    23
 #define GPIIO_PIN_OSD_EN     24
@@ -35,6 +36,7 @@ static const char *spi_device = "/dev/spidev1.0";
 #endif
 
 #ifdef ORANGEPI_ZERO_2W
+#define SPI_SPEED 30000000
 #define GPIIO_PIN_FPGA_RESET 261
 #define GPIIO_PIN_FPGA_EN    270
 #define GPIIO_PIN_OSD_EN     228
@@ -42,6 +44,7 @@ static const char *spi_device = "/dev/spidev1.0";
 #endif
 
 #ifdef SIPEED_LICHEE_RV
+#define SPI_SPEED 8000000
 #define GPIIO_PIN_FPGA_RESET 102
 #define GPIIO_PIN_FPGA_EN    103
 #define GPIIO_PIN_OSD_EN     104
@@ -54,7 +57,6 @@ static struct gpiod_line *gpio_line_fpga_en;
 static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
 
-#define SPI_SPEED 8000000
 const static bool spi_trace = 0;
 #define SPI_EN_TRACE 0
 

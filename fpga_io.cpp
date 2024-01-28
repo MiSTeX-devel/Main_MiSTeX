@@ -58,7 +58,7 @@ static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
 
 const static bool spi_trace = 0;
-#define SPI_EN_TRACE 0
+const static bool spi_en_trace = 0;
 
 uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
 uint8_t rx_buf[2];    	// RX buffer (16 bit unsigned integer)
@@ -254,7 +254,7 @@ void fpga_spi_en(uint32_t mask, uint32_t en)
 {
 	static uint8_t spi_mode = SPI_MODE_1;
 
-	if (SPI_EN_TRACE) printf("fpga_spi_en(%8x, %x)\n", mask, en);
+	if (spi_en_trace) printf("fpga_spi_en(%8x, %x)\n", mask, en);
 	if (mask & SSPI_FPGA_EN) gpiod_line_set_value(gpio_line_fpga_en, en);
 	if (mask & SSPI_OSD_EN)  gpiod_line_set_value(gpio_line_osd_en,  en);
 	if (mask & SSPI_IO_EN)   gpiod_line_set_value(gpio_line_io_en,   en);

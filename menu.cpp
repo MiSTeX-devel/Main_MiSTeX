@@ -1921,12 +1921,11 @@ void HandleUI(void)
 			OsdWrite(8, "          Saving...");
 			menustate = MENU_GENERIC_SAVE_WAIT;
 		}
-		// TODO: This does not work anymore with the new SPI controller
-		//else if (is_arcade() && spi_uio_cmd(UIO_CHK_UPLOAD))
-		//{
-		//	menu_save_timer = GetTimer(1000);
-		//	arcade_nvm_save();
-		//}
+		else if (is_arcade() && spi_uio_cmd(UIO_CHK_UPLOAD))
+		{
+			menu_save_timer = GetTimer(1000);
+			arcade_nvm_save();
+		}
 		else if (menu)
 		{
 			menustate = MENU_NONE1;

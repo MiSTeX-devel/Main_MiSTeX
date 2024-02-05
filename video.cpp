@@ -58,6 +58,8 @@
 #define VRR_FREESYNC 0x01
 #define VRR_VESA     0x02
 
+#define I2C_ADDRESS  0x39
+
 static int     use_vrr = 0;
 static uint8_t vrr_min_fr = 0;
 static uint8_t vrr_max_fr = 0;
@@ -1097,7 +1099,7 @@ void video_loadPreset(char *name, bool save)
 
 static void hdmi_config_set_spd(bool val)
 {
-	int fd = i2c_open(0x39, 2);
+	int fd = i2c_open(I2C_ADDRESS, 2);
 	if (fd >= 0)
 	{
 		uint8_t packet_val = i2c_smbus_read_byte_data(fd, 0x40);
@@ -1113,7 +1115,7 @@ static void hdmi_config_set_spd(bool val)
 
 static void hdmi_config_set_spare(int packet, bool enabled)
 {
-	int fd = i2c_open(0x39, 2);
+	int fd = i2c_open(I2C_ADDRESS, 2);
 	uint8_t mask = packet == 0 ? 0x01 : 0x02;
 	if (fd >= 0)
 	{
@@ -1345,7 +1347,7 @@ static void hdmi_config_set_csc()
 		0xC3, (uint8_t)(clipMax & 0xff)
 	};
 
-	int fd = i2c_open(0x39, 2);
+	int fd = i2c_open(I2C_ADDRESS, 2);
 	if (fd >= 0)
 	{
 		for (uint i = 0; i < sizeof(csc_data); i += 2)

@@ -219,13 +219,13 @@ int i2c_open(int dev_address, int is_smbus)
 
 		if ((fd = open(str, O_RDWR | O_CLOEXEC)) < 0)
 		{
-			//printf("Unable to open I2C bus %s: %s\n", str, strerror(errno));
+			printf("Unable to open I2C bus %s: %s\n", str, strerror(errno));
 			continue;
 		}
 
 		if (ioctl(fd, I2C_SLAVE, dev_address) < 0)
 		{
-			//printf("Unable to select I2C device 0x%X on bus %s: %s\n", dev_address, str, strerror(errno));
+			printf("Unable to select I2C device 0x%X on bus %s: %s\n", dev_address, str, strerror(errno));
 			close(fd);
 			continue;
 		}
@@ -234,7 +234,7 @@ int i2c_open(int dev_address, int is_smbus)
 		{
 			if (i2c_smbus_write_quick(fd, 0) < 0)
 			{
-				//printf("Unable to detect SMBUS device on bus %s: %s\n", str, strerror(errno));
+				printf("Unable to detect SMBUS device on bus %s: %s\n", str, strerror(errno));
 				close(fd);
 				continue;
 			}
@@ -243,7 +243,7 @@ int i2c_open(int dev_address, int is_smbus)
 		{
 			if (i2c_smbus_read_byte(fd) < 0)
 			{
-				//printf("Unable to detect I2C device on bus %s: %s\n", str, strerror(errno));
+				printf("Unable to detect I2C device on bus %s: %s\n", str, strerror(errno));
 				close(fd);
 				continue;
 			}

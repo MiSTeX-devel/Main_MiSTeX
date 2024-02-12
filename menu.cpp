@@ -512,7 +512,7 @@ static uint32_t menu_key_get(void)
 	{
 		static unsigned long longpress = 0, longpress_consumed = 0;
 		static unsigned char last_but = 0;
-		unsigned char but = user_io_menu_button();
+		unsigned char but = user_io_osd_button();
 
 		if (but && !last_but) longpress = GetTimer(3000);
 		if (but && CheckTimer(longpress) && !longpress_consumed)

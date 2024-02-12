@@ -29,26 +29,29 @@ static const char *spi_device = "/dev/spidev1.0";
 
 #ifdef RASPBERRY_PI
 #define SPI_SPEED 8000000
-#define GPIIO_PIN_FPGA_RESET 22
-#define GPIIO_PIN_FPGA_EN    23
-#define GPIIO_PIN_OSD_EN     24
-#define GPIIO_PIN_IO_EN      25
+#define GPIO_PIN_FPGA_RESET 22
+#define GPIO_PIN_FPGA_EN    23
+#define GPIO_PIN_OSD_EN     24
+#define GPIO_PIN_IO_EN      25
 #endif
 
 #ifdef ORANGEPI_ZERO_2W
 #define SPI_SPEED 30000000
-#define GPIIO_PIN_FPGA_RESET 261
-#define GPIIO_PIN_FPGA_EN    270
-#define GPIIO_PIN_OSD_EN     228
-#define GPIIO_PIN_IO_EN      262
+#define GPIO_PIN_FPGA_RESET 261
+#define GPIO_PIN_FPGA_EN    270
+#define GPIO_PIN_OSD_EN     228
+#define GPIO_PIN_IO_EN      262
+#define GPIO_PIN_BTN_MENU   268
+#define GPIO_PIN_BTN_OSD    258
+#define GPIO_PIN_BTN_USER   272
 #endif
 
 #ifdef SIPEED_LICHEE_RV
 #define SPI_SPEED 8000000
-#define GPIIO_PIN_FPGA_RESET 102
-#define GPIIO_PIN_FPGA_EN    103
-#define GPIIO_PIN_OSD_EN     104
-#define GPIIO_PIN_IO_EN      105
+#define GPIO_PIN_FPGA_RESET 102
+#define GPIO_PIN_FPGA_EN    103
+#define GPIO_PIN_OSD_EN     104
+#define GPIO_PIN_IO_EN      105
 #endif
 
 static struct gpiod_chip *gpio_chip;
@@ -56,6 +59,9 @@ static struct gpiod_line *gpio_line_fpga_reset;
 static struct gpiod_line *gpio_line_fpga_en;
 static struct gpiod_line *gpio_line_osd_en;
 static struct gpiod_line *gpio_line_io_en;
+static struct gpiod_line *gpio_line_btn_menu;
+static struct gpiod_line *gpio_line_btn_osd;
+static struct gpiod_line *gpio_line_btn_user;
 
 const static bool spi_trace = 0;
 const static bool spi_en_trace = 0;
@@ -138,20 +144,29 @@ int fpga_io_init()
 	gpio_chip = gpiod_chip_open_by_name(gpio_chip_name);
 	if (!gpio_chip) goto err;
 
-	gpio_line_fpga_reset = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_FPGA_RESET);
-	gpio_line_fpga_en    = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_FPGA_EN);
-	gpio_line_osd_en     = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_OSD_EN);
-	gpio_line_io_en      = gpiod_chip_get_line(gpio_chip, GPIIO_PIN_IO_EN);
+	gpio_line_fpga_reset = gpiod_chip_get_line(gpio_chip, GPIO_PIN_FPGA_RESET);
+	gpio_line_fpga_en    = gpiod_chip_get_line(gpio_chip, GPIO_PIN_FPGA_EN);
+	gpio_line_osd_en     = gpiod_chip_get_line(gpio_chip, GPIO_PIN_OSD_EN);
+	gpio_line_io_en      = gpiod_chip_get_line(gpio_chip, GPIO_PIN_IO_EN);
+	gpio_line_btn_menu   = gpiod_chip_get_line(gpio_chip, GPIO_PIN_BTN_MENU);
+	gpio_line_btn_osd    = gpiod_chip_get_line(gpio_chip, GPIO_PIN_BTN_OSD);
+	gpio_line_btn_user   = gpiod_chip_get_line(gpio_chip, GPIO_PIN_BTN_USER);
+
 	if (!gpio_line_fpga_en     ||
 	    !gpio_line_osd_en      ||
 		!gpio_line_io_en       ||
-		!gpio_line_fpga_reset) goto err;
+		!gpio_line_fpga_reset  ||
+		!gpio_line_btn_menu    ||
+		!gpio_line_btn_osd     ||
+		!gpio_line_btn_user    ) goto err;
 
 	gpiod_line_request_output(gpio_line_fpga_reset, "FPGA_RESET", 0);
 	gpiod_line_request_output(gpio_line_fpga_en, "FPGA_EN", 0);
 	gpiod_line_request_output(gpio_line_osd_en, "OSD_EN", 0);
 	gpiod_line_request_output(gpio_line_io_en, "IO_EN", 0);
-
+	gpiod_line_request_input(gpio_line_btn_menu, "BTN_MENU");
+	gpiod_line_request_input(gpio_line_btn_osd, "BTN_OSD");
+	gpiod_line_request_input(gpio_line_btn_user, "BTN_USER");
 	return 0;
 
 	err:
@@ -182,8 +197,10 @@ void fpga_set_led(uint32_t on)
 
 int fpga_get_buttons()
 {
-	// OSD/User Buttons
-	return 0;
+	int btn_osd  = !gpiod_line_get_value(gpio_line_btn_osd);
+	int btn_user = !gpiod_line_get_value(gpio_line_btn_user);
+	int btn_menu = !gpiod_line_get_value(gpio_line_btn_menu);
+	return btn_osd | (btn_user << 1) | (btn_menu << 2);
 }
 
 int fpga_get_io_type()

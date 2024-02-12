@@ -2661,7 +2661,7 @@ char *user_io_get_confstr(int index)
 }
 
 static char cur_btn = 0;
-char user_io_menu_button()
+char user_io_osd_button()
 {
 	return (cur_btn & BUTTON_OSD) ? 1 : 0;
 }
@@ -2693,7 +2693,7 @@ void user_io_send_buttons(char force)
 
 	cur_btn = fpga_get_buttons();
 
-	if (user_io_menu_button()) map |= BUTTON1;
+	if (user_io_osd_button()) map |= BUTTON1;
 	if (user_io_user_button()) map |= BUTTON2;
 	if (kbd_reset || kbd_reset_ovr) map |= BUTTON2;
 

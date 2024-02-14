@@ -33,6 +33,9 @@ static const char *spi_device = "/dev/spidev1.0";
 #define GPIO_PIN_FPGA_EN    23
 #define GPIO_PIN_OSD_EN     24
 #define GPIO_PIN_IO_EN      25
+#define GPIO_PIN_BTN_MENU   13
+#define GPIO_PIN_BTN_OSD    19
+#define GPIO_PIN_BTN_USER   26
 #endif
 
 #ifdef ORANGEPI_ZERO_2W

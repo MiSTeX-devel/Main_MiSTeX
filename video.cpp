@@ -1762,6 +1762,7 @@ static int get_active_edid()
 	int hpd_state = i2c_smbus_read_byte_data(fd, 0x42);
 	if (hpd_state < 0 || !(hpd_state & 0x20))
 	{
+		printf("No HDMI clock. Giving up on EDID...\n");
 		i2c_close(fd);
 		return 0;
 	}

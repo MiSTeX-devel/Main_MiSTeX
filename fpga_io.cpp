@@ -28,7 +28,7 @@ static const char *gpio_chip_name = "gpiochip0";
 static const char *spi_device = "/dev/spidev1.0";
 
 #ifdef RASPBERRY_PI
-#define SPI_SPEED 8000000
+#define SPI_SPEED 20000000
 #define GPIO_PIN_FPGA_RESET 22
 #define GPIO_PIN_FPGA_EN    23
 #define GPIO_PIN_OSD_EN     24

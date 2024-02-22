@@ -2186,6 +2186,7 @@ static void video_set_mode(vmode_custom_t *v, double Fpix)
 
 	printf("%chsync, %cvsync\n", !!v_cur.param.hpol ? '+' : '-', !!v_cur.param.vpol ? '+' : '-');
 
+	printf("     0x4 =    M, 0x3 =      N, 0x5 =    C, 0x9 = chargepump, 0x8 = bandwidth, 0x7 = K\n");
 	printf("PLL: ");
 	for (int i = 9; i < 21; i++)
 	{

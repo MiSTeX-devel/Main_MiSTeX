@@ -1478,7 +1478,7 @@ static void hdmi_config_init()
 		0xFA, 0x7D,				// Nbr of times to search for good phase
 
 		// (Audio stuff on Programming Guide, Page 66)...
-		0x0A, 0b00010000,		// [6:4] Audio Select. b000 = I2S. b001 = SPDIF
+		0x0A, 0b00010000,		// [7] CTS Select 0-auto 1-manual. [6:4] Audio Select. b000 = I2S. b001 = SPDIF
 								// [3:2] Audio Mode. (HBR stuff, leave at 00!).
 								// [1:0] MCLK ratio: b00: 128x, 01 = 256x 10 = 384x 11 = 512x
 		0x0B, 0b10001110,		// [7]: SPDIF enable [6]: Audio clock polarity 0-rising/1-falling [5]: MCLK 0-internal/1-external [4:1] = fixed 0b111

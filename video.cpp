@@ -1407,12 +1407,12 @@ static void hdmi_config_init()
 
 		0x3B, 0b00000000,         // [6:5] pixel repeat mode: 00 = auto mode, 01 = max mode, 10 = manual mode, 11 = manual mod
 
-		0x48, 0b00001000,       // [6]=0 Normal bus order!
+		0x48, 0b00001000,		// [6]=0 Normal bus order!
 								// [5] DDR Alignment.
 								// [4:3] b01 Data right justified (for YCbCr 422 input modes).
 
 		0x49, 0xA8,				// ADI required Write.
-		0x4A, 0b10000000, //Auto-Calculate SPD checksum
+		0x4A, 0b10000000, 			//Auto-Calculate SPD checksum
 		0x4C, 0x00,				// ADI required Write.
 
 		0x55, (uint8_t)(cfg.hdmi_game_mode ? 0b00010010 : 0b00010000),

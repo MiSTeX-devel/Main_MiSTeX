@@ -1405,8 +1405,7 @@ static void hdmi_config_init()
 
 		0x17, 0b01100010,		// Aspect ratio 16:9 [1]=1, 4:3 [1]=0, invert sync polarity
 
-		0x3B, 0x0,              // Automatic pixel repetition and VIC detection
-
+		0x3B, 0b00000000,         // [6:5] pixel repeat mode: 00 = auto mode, 01 = max mode, 10 = manual mode, 11 = manual mod
 
 		0x48, 0b00001000,       // [6]=0 Normal bus order!
 								// [5] DDR Alignment.
@@ -1455,11 +1454,11 @@ static void hdmi_config_init()
 		0xAB, 0x40,				// ADI required Write.
 
 		0xAF, (uint8_t)(0b00000100	// [7]=0 HDCP Disabled.
-								// [6:5] must be b00!
-								// [4]=0 Current frame is unencrypted
-								// [3:2] must be b01!
-			| ((cfg.dvi_mode == 1) ? 0b00 : 0b10)),	 //	[1]=1 HDMI Mode.
-								// [0] must be b0!
+									// [6:5] must be b00!
+									// [4]=0 Current frame is unencrypted
+									// [3:2] must be b01!
+			| ((cfg.dvi_mode == 1) ? 0b00 : 0b10)),	//	[1]=1 HDMI Mode.
+										// [0] must be b0!
 
 		0xB9, 0x00,				// ADI required Write.
 
@@ -1479,19 +1478,20 @@ static void hdmi_config_init()
 		0xFA, 0x7D,				// Nbr of times to search for good phase
 
 		// (Audio stuff on Programming Guide, Page 66)...
-		0x0A, 0b00000000,		// [6:4] Audio Select. b000 = I2S.
+		0x0A, 0b00010000,		// [6:4] Audio Select. b000 = I2S. b001 = SPDIF
 								// [3:2] Audio Mode. (HBR stuff, leave at 00!).
+								// [1:0] MCLK ratio: b00: 128x, 01 = 256x 10 = 384x 11 = 512x
+		0x0B, 0b10001110,		// [7]: SPDIF enable [6]: Audio clock polarity 0-rising/1-falling [5]: MCLK 0-internal/1-external [4:1] = fixed 0b111
+		0x04, 0b00100000,         // [7:4]: SPDIF sampling rate: b0000 = (44.1KHz). b0010 = 48KHz. b1010 = 96KHz.
 
-		0x0B, 0b00001110,		//
-
-		0x0C, 0b00000100,		// [7] 0 = Use sampling rate from I2S stream.   1 = Use samp rate from I2C Register.
+		0x0C, 0b10000000,		// [7] 0 = Use sampling rate from I2S stream.   1 = Use samp rate from I2C Register.
 								// [6] 0 = Use Channel Status bits from stream. 1 = Use Channel Status bits from I2C register.
 								// [2] 1 = I2S0 Enable.
 								// [1:0] I2S Format: 00 = Standard. 01 = Right Justified. 10 = Left Justified. 11 = AES.
 
 		0x0D, 0b00010000,		// [4:0] I2S Bit (Word) Width for Right-Justified.
 		0x14, 0b00000010,		// [3:0] Audio Word Length. b0010 = 16 bits.
-		0x15, (uint8_t)((cfg.hdmi_audio_96k ? 0x80 : 0x00) | 0b0100000),	// I2S Sampling Rate [7:4]. b0000 = (44.1KHz). b0010 = 48KHz.
+		0x15, (uint8_t)((cfg.hdmi_audio_96k ? 0x80 : 0x00) | 0b0100000),	// I2S Sampling Rate [7:4]. 
 								// Input ID [3:1] b000 (0) = 24-bit RGB 444 or YCrCb 444 with Separate Syncs.
 
 		// Audio Clock Config
@@ -1501,7 +1501,7 @@ static void hdmi_config_init()
 
 		0x07, 0x01,				//
 		0x08, 0x22,				// Set CTS Value 74250
-		0x09, 0x0A,				//
+		0x09, 0x0A,				//		
 	};
 
 	int fd = i2c_open(0x39, 2);

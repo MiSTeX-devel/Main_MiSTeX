@@ -1457,7 +1457,7 @@ static void hdmi_config_init()
 									// [6:5] must be b00!
 									// [4]=0 Current frame is unencrypted
 									// [3:2] must be b01!
-			| ((cfg.dvi_mode == 1) ? 0b00 : 0b10)),	//	[1]=1 HDMI Mode.
+			| ((cfg.dvi_mode == 1) ? 0b00 : 0b10)),	// [1]=1 HDMI Mode.
 										// [0] must be b0!
 
 		0xB9, 0x00,				// ADI required Write.

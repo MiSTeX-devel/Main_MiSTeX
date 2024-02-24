@@ -79,6 +79,10 @@ private:
 	uint8_t cd_buf[4096 + 2];
 	int audioLength;
 	int audioFirst;
+	int chd_hunknum;
+	uint8_t *chd_hunkbuf;
+	int chd_audio_read_lba;
+
 
 	int LoadCUE(const char* filename);
 	void LBAToMSF(int lba, msf_t* msf);
@@ -95,6 +99,10 @@ private:
 
 extern satcdd_t satcdd;
 extern uint32_t frame_cnt;
+
+
+#define CD_DATA_IO_INDEX	8
+#define SAVE_IO_INDEX		4 // fake download to trigger save loading
 
 void saturn_poll();
 void saturn_set_image(int num, const char *filename);

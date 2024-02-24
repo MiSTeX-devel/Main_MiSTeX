@@ -26,4 +26,3 @@ export CC=$GCC_DIR/bin/arm-none-gnueabihf-gcc
 export PATH="$GCC_DIR/bin:$PATH"
 
 echo "Done!"
-

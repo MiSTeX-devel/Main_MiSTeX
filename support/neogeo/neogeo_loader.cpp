@@ -355,13 +355,10 @@ static void notify_core(uint8_t index, uint32_t size)
 static uint32_t crom_sz = 0;
 static uint32_t neogeo_tx(const char* path, const char* name, uint8_t neo_file_type, int16_t index, uint32_t offset, uint32_t size, uint32_t expand = 0, int swap = 0)
 {
-	/*
-	if (index >= 0) neogeo_file_tx(path, name, neo_file_type, index, offset, size);
-	return 0;
-	*/
-
 	uint32_t sz = 0;
-
+	if (index >= 0) sz = neogeo_file_tx(path, name, neo_file_type, index, offset, size);
+	return sz;
+	/* MiSTeX does not have shared memory with the FPGA
 	if (index >= 64)
 	{
 		sz = load_crom_to_mem(path, name, index, offset, size);
@@ -387,6 +384,7 @@ static uint32_t neogeo_tx(const char* path, const char* name, uint8_t neo_file_t
 	}
 
 	return sz;
+	*/
 }
 
 struct rom_info

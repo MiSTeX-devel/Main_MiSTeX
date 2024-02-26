@@ -1189,9 +1189,54 @@ void ResetUART()
 
 uint16_t sdram_sz(int sz)
 {
-	int res = 1; // hardwire SDRAM
-	printf("sdram_sz(%d)\n", sz);
-	// TODO: report SDRAM SIZE
+	uint16_t sdram_config = 0;
+	uint16_t res;
+
+	const char *filename = "/tmp/sdram_sz.bin";
+
+	if (sz > 0) {
+		sdram_config = (uint16_t) sz;
+
+		FILE *fp = fopen(filename, "wb");
+		if (fp == NULL) {
+			printf("Error opening file: %s\n", filename);
+			return 0;
+		}
+		size_t written = fwrite(&sdram_config, sizeof(sdram_config), 1, fp);
+		if (written != 1) {
+			printf("Error writing data to file: %s\n", filename);
+			fclose(fp);
+			return 0;
+		}
+		fclose(fp);
+		res = 0x8000 | sz;
+	} else {
+		FILE *fp = fopen(filename, "rb");
+
+		if (fp == NULL) {
+			printf("Error opening file: %s\n", filename);
+			return 0;
+		}
+		size_t read = fread(&sdram_config, sizeof(sdram_config), 1, fp);
+		if (read != 1) {
+			printf("Error reading data from file: %s\n", filename);
+			fclose(fp);
+			return 0;
+		}
+		fclose(fp);
+
+		if (sdram_config != 0)
+		{
+			res = 0x8000 | sdram_config;
+			if(res & 0x4000) printf("\n*** Debug phase: %d\n", (res & 0x100) ? (res & 0xFF) : -(res & 0xFF));
+			else printf("\n*** Found SDRAM config: %d\n", res & 7);
+		}
+		else if(!is_menu())
+		{
+			printf("\n*** SDRAM config not found\n");
+		}
+	}
+
 	return res;
 }
 
@@ -3331,6 +3376,7 @@ void user_io_poll()
 			if (!got_cfg)
 			{
 				spi_uio_cmd_cont(UIO_GET_OSDMASK);
+				spi_w(0); // need one more access to get the result
 				sdram_cfg = spi_w(0);
 				DisableIO();
 

@@ -1242,9 +1242,29 @@ uint16_t sdram_sz(int sz)
 
 uint16_t altcfg(int alt)
 {
+	static uint8_t alt_config;
+	static bool got_alt_config;
 	int res = 0;
-	printf("altcfg(%d)\n", alt);
-	// TODO
+
+	if (alt >= 0)
+	{
+		alt_config = (uint8_t)alt;
+		got_alt_config = true;
+		printf("** altcfg(%d)\n", alt);
+	}
+	else
+	{
+		if (got_alt_config)
+		{
+			res = alt_config;
+			printf("** altcfg: got cfg %d\n", res);
+		}
+		else
+		{
+			printf("** altcfg: no cfg\n");
+		}
+	}
+
 	return res;
 }
 

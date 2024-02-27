@@ -2870,6 +2870,8 @@ void video_mode_adjust()
 
 static void fb_write_module_params()
 {
+	return;
+	/* only available on MiSTer with MiSTer_fb kernel module
 	int width = fb_width;
 	int height = fb_height;
 	offload_add_work([=]
@@ -2881,6 +2883,7 @@ static void fb_write_module_params()
 			fclose(fp);
 		}
 	});
+	*/
 }
 
 void video_fb_enable(int enable, int n)

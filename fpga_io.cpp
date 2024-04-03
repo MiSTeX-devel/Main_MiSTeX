@@ -85,8 +85,6 @@ struct spi_ioc_transfer spi_transfer =
 
 int spi_fd;
 
-static uint32_t *map_base;
-
 #define MAP_ADDR 0x0
 #define writel(val, reg) *MAP_ADDR(reg) = val
 #define readl(reg) *MAP_ADDR(reg)

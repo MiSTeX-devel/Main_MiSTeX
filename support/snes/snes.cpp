@@ -376,8 +376,8 @@ void snes_msu_init(const char* name)
 
 	if (size && size < 0x1F200000)
 	{
-		msu_send_command((0x800000ULL << 16) | MSU_DATA_BASE);
-		user_io_file_tx(SelectedPath, 3, 0, 0, 0, 0x800000);
+		msu_send_command((0x4000000ULL << 16) | MSU_DATA_BASE);
+		user_io_file_tx(SelectedPath, 3, 0, 0, 0, 0x4000000);
 	}
 
 	msu_send_command((has_cd << 15) | MSU_CD_SET);

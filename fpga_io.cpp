@@ -36,6 +36,7 @@ static const char *spi_device = "/dev/spidev1.0";
 #define GPIO_PIN_BTN_MENU   13
 #define GPIO_PIN_BTN_OSD    19
 #define GPIO_PIN_BTN_USER   26
+#define GPIO_PIN_IO_WIDE    21
 #endif
 
 #ifdef ORANGEPI_ZERO_2W
@@ -47,6 +48,7 @@ static const char *spi_device = "/dev/spidev1.0";
 #define GPIO_PIN_BTN_MENU   268
 #define GPIO_PIN_BTN_OSD    258
 #define GPIO_PIN_BTN_USER   272
+#define GPIO_PIN_IO_WIDE    259
 #endif
 
 #ifdef SIPEED_LICHEE_RV
@@ -65,6 +67,7 @@ static struct gpiod_line *gpio_line_io_en;
 static struct gpiod_line *gpio_line_btn_menu;
 static struct gpiod_line *gpio_line_btn_osd;
 static struct gpiod_line *gpio_line_btn_user;
+static struct gpiod_line *gpio_line_io_wide;
 
 const static bool spi_trace = 0;
 const static bool spi_en_trace = 0;
@@ -152,6 +155,7 @@ int fpga_io_init()
 	gpio_line_btn_menu   = gpiod_chip_get_line(gpio_chip, GPIO_PIN_BTN_MENU);
 	gpio_line_btn_osd    = gpiod_chip_get_line(gpio_chip, GPIO_PIN_BTN_OSD);
 	gpio_line_btn_user   = gpiod_chip_get_line(gpio_chip, GPIO_PIN_BTN_USER);
+	gpio_line_io_wide    = gpiod_chip_get_line(gpio_chip, GPIO_PIN_IO_WIDE);
 
 	if (!gpio_line_fpga_en     ||
 	    !gpio_line_osd_en      ||
@@ -159,15 +163,18 @@ int fpga_io_init()
 		!gpio_line_fpga_reset  ||
 		!gpio_line_btn_menu    ||
 		!gpio_line_btn_osd     ||
-		!gpio_line_btn_user    ) goto err;
+		!gpio_line_btn_user    ||
+		!gpio_line_io_wide) goto err;
 
 	gpiod_line_request_output(gpio_line_fpga_reset, "FPGA_RESET", 0);
-	gpiod_line_request_output(gpio_line_fpga_en, "FPGA_EN", 0);
-	gpiod_line_request_output(gpio_line_osd_en, "OSD_EN", 0);
-	gpiod_line_request_output(gpio_line_io_en, "IO_EN", 0);
+	gpiod_line_request_output(gpio_line_fpga_en,    "FPGA_EN",    0);
+	gpiod_line_request_output(gpio_line_osd_en,     "OSD_EN",     0);
+	gpiod_line_request_output(gpio_line_io_en,      "IO_EN",      0);
+
 	gpiod_line_request_input(gpio_line_btn_menu, "BTN_MENU");
-	gpiod_line_request_input(gpio_line_btn_osd, "BTN_OSD");
+	gpiod_line_request_input(gpio_line_btn_osd,  "BTN_OSD");
 	gpiod_line_request_input(gpio_line_btn_user, "BTN_USER");
+	gpiod_line_request_input(gpio_line_io_wide,  "IO_WIDE");
 	return 0;
 
 	err:
@@ -206,8 +213,7 @@ int fpga_get_buttons()
 
 int fpga_get_io_type()
 {
-	// the FPGA board switches
-	return 0;
+	return gpiod_line_get_value(gpio_line_io_wide);
 }
 
 void reboot(int cold)

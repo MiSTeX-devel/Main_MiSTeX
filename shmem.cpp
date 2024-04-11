@@ -17,57 +17,31 @@ static int memfd = -1;
 
 void *shmem_map(uint32_t address, uint32_t size)
 {
-	if (memfd < 0)
-	{
-		memfd = open("/dev/mem", O_RDWR | O_SYNC | O_CLOEXEC);
-		if (memfd == -1)
-		{
-			printf("Error: Unable to open /dev/mem!\n");
-			return 0;
-		}
-	}
-
-	void *res = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, memfd, address);
-	if (res == (void *)-1)
-	{
-		printf("Error: Unable to mmap (0x%X, %d)!\n", address, size);
-		return 0;
-	}
-
-	return res;
+	printf("******** TODO: shmem_map not implemented\n");
+	printf("*********addr: 0x%8x size: %d\n", address, size);
+	return 0;
 }
 
 int shmem_unmap(void* map, uint32_t size)
 {
-	if (munmap(map, size) < 0)
-	{
-		printf("Error: Unable to unmap(0x%X, %d)!\n", (uint64_t)map, size);
-		return 0;
-	}
+	printf("******** TODO: shmem_unmap not implemented\n");
+	printf("*********size: %d\n", size);
 
 	return 1;
 }
 
 int shmem_put(uint32_t address, uint32_t size, void *buf)
 {
-	void *shmem = shmem_map(address, size);
-	if (shmem)
-	{
-		memcpy(shmem, buf, size);
-		shmem_unmap(shmem, size);
-	}
+	printf("******** TODO: shmem_put not implemented\n");
+	printf("*********addr: 0x%8x size: %d\n", address, size);
 
-	return shmem != 0;
+	return 1;
 }
 
 int shmem_get(uint32_t address, uint32_t size, void *buf)
 {
-	void *shmem = shmem_map(address, size);
-	if (shmem)
-	{
-		memcpy(buf, shmem, size);
-		shmem_unmap(shmem, size);
-	}
+	printf("******** TODO: shmem_get not implemented\n");
+	printf("*********addr: 0x%8x size: %d\n", address, size);
 
-	return shmem != 0;
+	return 1;
 }

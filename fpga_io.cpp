@@ -190,7 +190,7 @@ int fpga_core_id()
 int fpga_get_fio_size()
 {
 	// 0: normal (8-bit) or 1: wide (16-bit) IO
-	return 0;
+	return gpiod_line_get_value(gpio_line_io_wide);
 }
 
 int fpga_get_io_version()
@@ -213,7 +213,7 @@ int fpga_get_buttons()
 
 int fpga_get_io_type()
 {
-	return gpiod_line_get_value(gpio_line_io_wide);
+	return 1;
 }
 
 void reboot(int cold)

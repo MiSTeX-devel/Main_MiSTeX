@@ -2469,13 +2469,16 @@ int user_io_file_tx(const char* name, unsigned char index, char opensave, char m
 	if(load_addr) printf("Load to address 0x%X\n", load_addr);
 
 	// set index byte (0=bios rom, 1-n=OSD entry index)
+	printf("===> user_io_set_index: %d\n", index);
 	user_io_set_index(index);
 
 	int len = strlen(f.name);
 	char *p = f.name + len - 4;
+	printf("===> user_io_file_info: '%s'\n", p);
 	user_io_file_info(p);
 
 	// prepare transmission of new file
+	printf("===> user_io_set_download: load_addr: 0x%8x bytes: %d\n", load_addr, bytes2send);
 	user_io_set_download(1, load_addr ? bytes2send : 0);
 
 	int dosend = 1;
@@ -2599,6 +2602,7 @@ int user_io_file_tx(const char* name, unsigned char index, char opensave, char m
 		}
 	}
 
+	printf("===> dosend: %d, load_addr: 0x%8x\n", dosend, load_addr);
 	if (dosend && load_addr >= 0x20000000 && (load_addr + bytes2send) <= 0x40000000)
 	{
 		uint32_t map_size = bytes2send + ((is_snes() && load_addr < 0x22000000) ? 0x800000 : 0);
@@ -2626,6 +2630,7 @@ int user_io_file_tx(const char* name, unsigned char index, char opensave, char m
 	{
 		while (dosend && bytes2send)
 		{
+			printf("===> dosend: %d, bytes2send: %d\n", dosend, bytes2send);
 			uint32_t chunk = (bytes2send > sizeof(buf)) ? sizeof(buf) : bytes2send;
 
 			FileReadAdv(&f, buf, chunk);

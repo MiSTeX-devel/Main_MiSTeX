@@ -370,6 +370,7 @@ void snes_msu_init(const char* name)
 	snprintf(SelectedPath, sizeof(SelectedPath), "%s.msu", snes_romFileName);
 	has_cd = FileOpen(&f, SelectedPath) ? 1 : 0;
 	uint32_t size = f.size;
+	printf("MSU size: %d\n", size);
 	FileClose(&f);
 
 	printf("MSU: enable cd: %d\n", has_cd);

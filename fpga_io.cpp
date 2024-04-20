@@ -186,11 +186,7 @@ int fpga_io_init()
 	}
 
 	if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
-		printf("ERROR: cannot set SPI write mode\n");
-		goto err;
-	}
-	if (ioctl(spi_fd, SPI_IOC_RD_MODE, &spi_mode) == -1) {
-		printf("ERROR: cannot set SPI read mode\n");
+		printf("ERROR: cannot set SPI mode\n");
 		goto err;
 	}
 

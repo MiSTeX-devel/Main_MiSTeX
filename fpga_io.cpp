@@ -79,9 +79,9 @@ struct spi_ioc_transfer spi_transfer =
 {	.tx_buf = (unsigned long)tx_buf,
 	.rx_buf = (unsigned long)rx_buf,
 	.len = 2,
-	.speed_hz = SPI_SPEED,
+	.speed_hz = 0,
 	.delay_usecs = 0,
-	.bits_per_word = 8,
+	.bits_per_word = 0,
 	// if this is zero, then CS is enabled
 	.cs_change = 0,
 };
@@ -145,6 +145,9 @@ int fpga_load_rbf(const char *name, const char *config, const char *xml) {
 
 int fpga_io_init()
 {
+	static uint8_t spi_mode = SPI_MODE_1;
+	static uint32_t val;
+
 	gpio_chip = gpiod_chip_open_by_name(gpio_chip_name);
 	if (!gpio_chip) goto err;
 
@@ -175,9 +178,49 @@ int fpga_io_init()
 	gpiod_line_request_input(gpio_line_btn_osd,  "BTN_OSD");
 	gpiod_line_request_input(gpio_line_btn_user, "BTN_USER");
 	gpiod_line_request_input(gpio_line_io_wide,  "IO_WIDE");
-	return 0;
 
+	spi_fd = open(spi_device, O_RDWR);
+	if (spi_fd == -1) {
+		printf("ERROR: cannot open SPI device %s\n", spi_device);
+		goto err;
+	}
+
+	if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
+		printf("ERROR: cannot set SPI write mode\n");
+		goto err;
+	}
+	if (ioctl(spi_fd, SPI_IOC_RD_MODE, &spi_mode) == -1) {
+		printf("ERROR: cannot set SPI read mode\n");
+		goto err;
+	}
+
+	val = SPI_SPEED;
+	if(ioctl(spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, &val)) {
+		printf("Could not set the SPI max speed...\r\n");
+		goto err;
+	}
+	
+	val = 8;
+	if(ioctl(spi_fd, SPI_IOC_WR_BITS_PER_WORD, &val)) {
+		printf("Could not set SPI bits per word...\r\n");
+		goto err;
+	}
+
+	if(ioctl(spi_fd, SPI_IOC_RD_MODE32, &val)) {
+		printf("Could not read SPI mode...\r\n");
+		goto err;
+	}
+	printf("==> SPI Mode: 0x%4x  ", val);
+
+	if(ioctl(spi_fd, SPI_IOC_RD_MAX_SPEED_HZ, &val)) {
+		printf("Could not read the SPI max speed...\r\n");
+		goto err;
+	}
+	printf("==> max SPI speed: %d\n", val);
+
+	return 0;
 	err:
+		if (spi_fd >= 0) close(spi_fd);
 		printf("Error: fpga_io_init() failed!\n");
 		return -1;
 }
@@ -276,34 +319,11 @@ int is_fpga_ready(int quick)
 
 void fpga_spi_en(uint32_t mask, uint32_t en)
 {
-	static uint8_t spi_mode = SPI_MODE_1;
 
 	if (spi_en_trace) printf("fpga_spi_en(%8x, %x)\n", mask, en);
 	if (mask & SSPI_FPGA_EN) gpiod_line_set_value(gpio_line_fpga_en, en);
 	if (mask & SSPI_OSD_EN)  gpiod_line_set_value(gpio_line_osd_en,  en);
 	if (mask & SSPI_IO_EN)   gpiod_line_set_value(gpio_line_io_en,   en);
-
-	if (en) {
-		spi_fd = open(spi_device, O_RDWR);
-		if (spi_fd == -1) {
-			printf("ERROR: cannot open SPI device %s\n", spi_device);
-			return;
-		}
-
-		if (ioctl(spi_fd, SPI_IOC_WR_MODE, &spi_mode) == -1) {
-			printf("ERROR: cannot set SPI write mode\n");
-			return;
-		}
-		if (ioctl(spi_fd, SPI_IOC_RD_MODE, &spi_mode) == -1) {
-			printf("ERROR: cannot set SPI read mode\n");
-			return;
-		}
-
-	} else {
-		if (spi_fd >= 0) {
-			close(spi_fd);
-		}
-	}
 }
 
 void fpga_wait_to_reset()

@@ -2602,7 +2602,7 @@ int user_io_file_tx(const char* name, unsigned char index, char opensave, char m
 		}
 	}
 
-	printf("===> dosend: %d, load_addr: 0x%8x\n", dosend, load_addr);
+	printf("===> dosend: %d, load_addr: 0x%08x\n", dosend, load_addr);
 	if (dosend && load_addr >= 0x20000000 && (load_addr + bytes2send) <= 0x40000000)
 	{
 		uint32_t map_size = bytes2send + ((is_snes() && load_addr < 0x22000000) ? 0x800000 : 0);

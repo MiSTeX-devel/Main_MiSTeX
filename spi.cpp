@@ -4,6 +4,8 @@
 
 #define SWAPW(a) ((((a)<<8)&0xff00)|(((a)>>8)&0x00ff))
 
+extern bool spi_trace;
+
 void EnableFpga()
 {
 	fpga_spi_en(SSPI_FPGA_EN, 1);
@@ -175,17 +177,22 @@ void spi_read(uint8_t *addr, uint32_t len, int wide)
 
 void spi_write(const uint8_t *addr, uint32_t len, int wide)
 {
+	if (spi_trace) printf("spi_write(addr: %08x len: %d wide: %d)\n", addr, len, wide);
 	if (wide)
 	{
 		uint32_t len16 = len >> 1;
 		uint16_t *a16 = (uint16_t*)addr;
-		while (len16--) spi_w(*a16++);
+		while (len16--) {
+			if (spi_trace) printf("len16: %d ", len16);
+			spi_w(*a16++);
+		}
 		if(len & 1) spi_w(*((uint8_t*)a16));
 	}
 	else
 	{
 		while (len--) spi_b(*addr++);
 	}
+	if (spi_trace) printf("spi_write done!\n");
 }
 
 void spi_block_read(uint8_t *addr, int wide, int sz)

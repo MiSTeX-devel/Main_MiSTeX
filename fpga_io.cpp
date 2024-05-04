@@ -69,7 +69,7 @@ static struct gpiod_line *gpio_line_btn_osd;
 static struct gpiod_line *gpio_line_btn_user;
 static struct gpiod_line *gpio_line_io_wide;
 
-const static bool spi_trace = 0;
+bool spi_trace = 0;
 const static bool spi_en_trace = 0;
 
 uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
@@ -206,7 +206,7 @@ int fpga_io_init()
 		printf("Could not read SPI mode...\r\n");
 		goto err;
 	}
-	printf("==> SPI Mode: 0x%4x  ", val);
+	printf("==> SPI Mode: 0x%04x  ", val);
 
 	if(ioctl(spi_fd, SPI_IOC_RD_MAX_SPEED_HZ, &val)) {
 		printf("Could not read the SPI max speed...\r\n");

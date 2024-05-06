@@ -72,13 +72,15 @@ static struct gpiod_line *gpio_line_io_wide;
 bool spi_trace = 0;
 const static bool spi_en_trace = 0;
 
-uint8_t tx_buf[2];    	// TX buffer (16 bit unsigned integer)
-uint8_t rx_buf[2];    	// RX buffer (16 bit unsigned integer)
+#define SPI_BYTES 32
+
+uint8_t tx_buf[SPI_BYTES];    	// TX buffer (16 bit unsigned integer)
+uint8_t rx_buf[SPI_BYTES];    	// RX buffer (16 bit unsigned integer)
 
 struct spi_ioc_transfer spi_transfer =
 {	.tx_buf = (unsigned long)tx_buf,
 	.rx_buf = (unsigned long)rx_buf,
-	.len = 2,
+	.len = SPI_BYTES,
 	.speed_hz = 0,
 	.delay_usecs = 0,
 	.bits_per_word = 0,
@@ -341,6 +343,8 @@ uint16_t fpga_spi(uint16_t word)
 	if (spi_trace) printf("fpga_spi(%04x)", word);
 	tx_buf[0] = word >> 8;
 	tx_buf[1] = word & 0xff;
+	for (int i=2; i<SPI_BYTES; i++)
+		tx_buf[i] = (i%2 == 0) ? 0 : i;//0xa + i;
 	if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &spi_transfer) < 1)
 	{
 		printf("Can't send SPI message");

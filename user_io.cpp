@@ -2948,6 +2948,7 @@ void user_io_poll()
 			uint32_t blksz, blks, sz;
 
 			uint16_t c = spi_uio_cmd_cont(UIO_GET_SDSTAT);
+			c = spi_w(0); // work around C64 1541 loading
 			if (c & 0x8000)
 			{
 				disk = (c >> 2) & 0xF;

@@ -72,7 +72,7 @@ static struct gpiod_line *gpio_line_io_wide;
 bool spi_trace = 0;
 const static bool spi_en_trace = 0;
 
-#define SPI_BYTES 32
+#define SPI_BYTES 2
 
 uint8_t tx_buf[SPI_BYTES];    	// TX buffer (16 bit unsigned integer)
 uint8_t rx_buf[SPI_BYTES];    	// RX buffer (16 bit unsigned integer)

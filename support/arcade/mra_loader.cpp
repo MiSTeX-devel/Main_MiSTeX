@@ -329,7 +329,7 @@ static void rom_finish(int send, uint32_t address, int index)
 			// prepare transmission of new file
 			user_io_set_download(1, address ? len : 0);
 
-			if (0) // if(address) don't have shmem_put
+			if (0) // TODO if(address) don't have shmem_put
 			{
 				shmem_put(fpga_mem(address), len, data);
 			}
